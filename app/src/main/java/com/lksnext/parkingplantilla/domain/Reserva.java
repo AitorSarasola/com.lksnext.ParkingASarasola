@@ -2,7 +2,9 @@ package com.lksnext.parkingplantilla.domain;
 
 public class Reserva {
 
-    String fecha, usuario, id;
+    String fecha;
+    String usuario;
+    String id;
 
     Plaza plaza;
 
