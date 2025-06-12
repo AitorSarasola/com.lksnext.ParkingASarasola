@@ -29,8 +29,8 @@ public class RegisterActivity extends AppCompatActivity {
             String email = binding.emailText.getText().toString();
             String password = binding.passwordText.getText().toString();
             String confirmPassword = binding.CpasswordText.getText().toString();
-            //String e = registerViewModel.registerUser(username, email, password, confirmPassword);
-            //binding.errorRegister.setText(e);
+            String e = registerViewModel.registerUser(username, email, password, confirmPassword);
+            binding.errorRegister.setText(e);
         });
 
         //Acciones a realizar cuando el usuario clica el boton de login (se cambia de pantalla)

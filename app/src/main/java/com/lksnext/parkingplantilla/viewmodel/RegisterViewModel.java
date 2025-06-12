@@ -10,7 +10,7 @@ import com.lksnext.parkingplantilla.domain.Callback;
 public class RegisterViewModel extends ViewModel {
     // Aquí puedes declarar los LiveData y métodos necesarios para la vista de registro
     // Por ejemplo, un LiveData para el email, contraseña y usuario
-    MutableLiveData<Boolean> signedUp = new MutableLiveData<>(null);
+    static MutableLiveData<Boolean> signedUp = new MutableLiveData<>(null);
 
     public static LiveData<Boolean> isSignedUp(){
         return signedUp;
@@ -23,14 +23,15 @@ public class RegisterViewModel extends ViewModel {
             @Override
             public void onSuccess() {
                 //TODO
-                logged.setValue(Boolean.TRUE);
+                signedUp.setValue(Boolean.TRUE);
             }
 
             //En caso de que el login sea incorrecto, que se hace
             @Override
             public void onFailure() {
                 //TODO
-                logged.setValue(Boolean.FALSE);
+                signedUp.setValue(Boolean.FALSE);
             }
         });
+    }
 }

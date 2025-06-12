@@ -133,7 +133,6 @@
         android:layout_marginStart="69dp"
         android:layout_marginTop="80dp"
         android:layout_marginEnd="66dp"
-        android:placeholderText="The email and the password can not be empty"
         android:text="The email and the password can not be empty"
         android:textAlignment="viewEnd"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
