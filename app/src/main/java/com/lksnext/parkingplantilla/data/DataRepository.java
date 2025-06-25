@@ -23,16 +23,16 @@ public class DataRepository {
         try {
             //Realizar petición
             if (email.isEmpty() && pass.isEmpty()){
-                throw new IllegalArgumentException("The email and the password can not be empty");
+                throw new IllegalArgumentException("El email y la contraseña no pueden estar vacíos.");
             }else if (email.isEmpty()){
-                throw new IllegalArgumentException("The email can not be empty");
+                throw new IllegalArgumentException("El email no puede estar vacío.");
             }else if(pass.isEmpty()){
-                throw new IllegalArgumentException("The password can not be empty");
+                throw new IllegalArgumentException("La contraseña no puede estar vacía.");
             }else if(! isValidEmail(email) ){
-                throw new IllegalArgumentException("The email is not valid");
+                throw new IllegalArgumentException("El email no es válido.");
             }
             callback.onSuccess();
-            return "";
+            return null;
         } catch (Exception e){
             callback.onFailure();
             return e.getMessage();
@@ -43,20 +43,22 @@ public class DataRepository {
         try {
             //Realizar petición
             if (email.isEmpty() || pass1.isEmpty() || pass2.isEmpty() || user.isEmpty()){
-                throw new IllegalArgumentException("You must fill all the fields");
+                throw new IllegalArgumentException("Debes rellenar todos los campos.");
             }else if(user.length() < 3 || user.length() > 20){
-                throw new IllegalArgumentException("The username must be between 3 and 20 characters long");
+                throw new IllegalArgumentException("El nombre de usuario debe tener entre 3 y 20 caracteres.");
             }else if(!isValidUser(user)){
-                throw new IllegalArgumentException("The username can only contain letters, numbers, and underscores");
-            }else if (!pass1.equals(pass2)){
-                throw new IllegalArgumentException("The passwords do not match");
-            }else if(pass1.length() < 6){
-                throw new IllegalArgumentException("The password must be at least 6 characters long");
+                throw new IllegalArgumentException("El nombre de usuario solo puede contener letras, números y barras bajas.");
             }else if(! isValidEmail(email) ){
-                throw new IllegalArgumentException("The email is not valid");
+                throw new IllegalArgumentException("El email no es válido.");
+            }else if (!pass1.equals(pass2)){
+                throw new IllegalArgumentException("Las contraseñas no coinciden.");
+            }else if(pass1.length() < 6) {
+                throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres.");
+            }else if(! isValidPassword(pass1) ) {
+                throw new IllegalArgumentException("La contraseña contiene caracteres no válidos.");
             }
             callback.onSuccess();
-            return "";
+            return null;
         } catch (Exception e){
             callback.onFailure();
             return e.getMessage();
@@ -74,6 +76,13 @@ public class DataRepository {
         String userRegex = "^[a-zA-Z0-9_]{3,20}$";
         Pattern pattern = Pattern.compile(userRegex);
         Matcher matcher = pattern.matcher(user);
+        return matcher.matches();
+    }
+
+    private boolean isValidPassword(String pass) {
+        String userRegex = "^[a-zA-Z0-9!\\ \"#$%&'()*+,-./:;<=>?@\\[\\]^_`{|}~]{3,20}$";
+        Pattern pattern = Pattern.compile(userRegex);
+        Matcher matcher = pattern.matcher(pass);
         return matcher.matches();
     }
 }

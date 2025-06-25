@@ -1,2 +1,10 @@
-rootProject.name = "ParkingPlantilla"
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "Parking"
 include ':app'

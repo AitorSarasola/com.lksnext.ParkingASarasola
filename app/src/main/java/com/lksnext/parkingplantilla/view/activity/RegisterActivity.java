@@ -2,11 +2,16 @@ package com.lksnext.parkingplantilla.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
+import com.google.firebase.FirebaseApp;
 import com.lksnext.parkingplantilla.databinding.ActivityRegisterBinding;
+import com.lksnext.parkingplantilla.view.fragment.MainFragment;
 import com.lksnext.parkingplantilla.viewmodel.RegisterViewModel;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -29,8 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
             String email = binding.emailText.getText().toString();
             String password = binding.passwordText.getText().toString();
             String confirmPassword = binding.CpasswordText.getText().toString();
-            String e = registerViewModel.registerUser(username, email, password, confirmPassword);
-            binding.errorRegister.setText(e);
+            registerViewModel.registerUser(username, email, password, confirmPassword);
         });
 
         //Acciones a realizar cuando el usuario clica el boton de login (se cambia de pantalla)
@@ -48,8 +52,14 @@ public class RegisterActivity extends AppCompatActivity {
                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
-                    //Login incorrecto
+                    binding.errorRegister.setText("Ha habido un error. Por favor, inténtelo de nuevo.");
                 }
+            }
+        });
+
+        registerViewModel.getError().observe(this, errorMsg -> {
+            if (errorMsg != null && !errorMsg.isEmpty()) {
+                binding.errorRegister.setText(errorMsg);
             }
         });
     }
