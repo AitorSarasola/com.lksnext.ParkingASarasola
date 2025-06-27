@@ -46,8 +46,6 @@ public class LoginActivity extends AppCompatActivity {
                     //Login Correcto
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
-                } else {
-                    //Login incorrecto
                 }
             }
         });

@@ -21,7 +21,7 @@ public class RegisterViewModel extends ViewModel {
 
     public void registerUser(String user, String email, String password1, String password2) {
         //Clase para comprobar si los datos de inicio de sesión son correctos o no
-        String e = DataRepository.getInstance().register(user, email, password1, password2, new Callback() {
+        DataRepository.getInstance().register(user, email, password1, password2, new Callback() {
             //En caso de que el login sea correcto, que se hace
             @Override
             public void onSuccess() {
@@ -31,8 +31,14 @@ public class RegisterViewModel extends ViewModel {
 
             //En caso de que el login sea incorrecto, que se hace
             @Override
-            public void onFailure() {
+            public void onFailure(String errorM) {
                 //TODO
+                error.setValue(errorM);
+                signedUp.setValue(Boolean.FALSE);
+            }
+            @Override
+            public void onFailure(){
+                error.setValue("Ha habido un error, prueba otro email o contraseña.");
                 signedUp.setValue(Boolean.FALSE);
             }
         });

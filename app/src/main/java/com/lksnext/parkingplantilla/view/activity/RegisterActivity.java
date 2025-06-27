@@ -51,8 +51,6 @@ public class RegisterActivity extends AppCompatActivity {
                     //Login Correcto
                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                     startActivity(intent);
-                } else {
-                    binding.errorRegister.setText("Ha habido un error. Por favor, inténtelo de nuevo.");
                 }
             }
         });
