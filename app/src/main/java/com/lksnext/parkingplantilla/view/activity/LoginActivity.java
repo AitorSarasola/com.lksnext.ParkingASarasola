@@ -29,8 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.loginButton.setOnClickListener(v -> {
             String email = binding.emailText.getText().toString();
             String password = binding.passwordText.getText().toString();
-            String e = loginViewModel.loginUser(email, password);
-            binding.errorLogin.setText(e);
+            loginViewModel.loginUser(email, password);
         });
 
         //Acciones a realizar cuando el usuario clica el boton de crear cuenta (se cambia de pantalla)
@@ -47,9 +46,13 @@ public class LoginActivity extends AppCompatActivity {
                     //Login Correcto
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
-                } else {
-                    //Login incorrecto
                 }
+            }
+        });
+
+        loginViewModel.getError().observe(this, errorMsg -> {
+            if (errorMsg != null && !errorMsg.isEmpty()) {
+                binding.errorLogin.setText(errorMsg);
             }
         });
     }

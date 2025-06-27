@@ -11,14 +11,17 @@ public class RegisterViewModel extends ViewModel {
     // Aquí puedes declarar los LiveData y métodos necesarios para la vista de registro
     // Por ejemplo, un LiveData para el email, contraseña y usuario
     static MutableLiveData<Boolean> signedUp = new MutableLiveData<>(null);
+    static MutableLiveData<String> error = new MutableLiveData<>(null);
 
     public static LiveData<Boolean> isSignedUp(){
         return signedUp;
     }
 
-    public String registerUser(String user, String email, String password1, String password2) {
+    public static MutableLiveData<String> getError() { return error; }
+
+    public void registerUser(String user, String email, String password1, String password2) {
         //Clase para comprobar si los datos de inicio de sesión son correctos o no
-        return DataRepository.getInstance().register(user, email, password1, password2, new Callback() {
+        DataRepository.getInstance().register(user, email, password1, password2, new Callback() {
             //En caso de que el login sea correcto, que se hace
             @Override
             public void onSuccess() {
@@ -28,8 +31,14 @@ public class RegisterViewModel extends ViewModel {
 
             //En caso de que el login sea incorrecto, que se hace
             @Override
-            public void onFailure() {
+            public void onFailure(String errorM) {
                 //TODO
+                error.setValue(errorM);
+                signedUp.setValue(Boolean.FALSE);
+            }
+            @Override
+            public void onFailure(){
+                error.setValue("Ha habido un error, prueba otro email o contraseña.");
                 signedUp.setValue(Boolean.FALSE);
             }
         });

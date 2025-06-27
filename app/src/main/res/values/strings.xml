@@ -2,6 +2,7 @@
     <string name="app_name">ParkingPlantilla</string>
 
     <string name="selectDate">Selecciona una fecha</string>
+    <string name="welcome">WELCOME</string>
 
     <string name="fragment_main">Main</string>
     <string name="fragment_step1">Step 1</string>
