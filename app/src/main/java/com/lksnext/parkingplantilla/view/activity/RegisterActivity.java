@@ -1,6 +1,7 @@
 package com.lksnext.parkingplantilla.view.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -49,8 +50,14 @@ public class RegisterActivity extends AppCompatActivity {
             if (signedUp != null) {
                 if (signedUp) {
                     //Login Correcto
+                    SharedPreferences preferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean("keepSignedIn", binding.checkbox.isChecked());
+                    editor.apply();
+
                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });

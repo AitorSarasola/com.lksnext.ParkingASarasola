@@ -1,5 +1,7 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -17,6 +19,18 @@ public class LoginViewModel extends ViewModel {
         return logged;
     }
     public LiveData<String> getError() { return error; }
+    public void failedLogin(String e){
+        logged.setValue(false);
+        error.setValue(e);
+    }
+
+    public void loginDone(){
+        logged.setValue(true);
+    }
+    public void checkLogged(){
+        if(DataRepository.checkLogged())
+            logged.setValue(true);
+    }
 
     public void loginUser(String email, String password) {
         //Clase para comprobar si los datos de inicio de sesión son correctos o no

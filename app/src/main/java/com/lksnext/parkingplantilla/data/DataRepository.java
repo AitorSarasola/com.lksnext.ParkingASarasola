@@ -3,8 +3,12 @@ package com.lksnext.parkingplantilla.data;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import android.content.SharedPreferences;
+import android.content.Context;
 
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -87,6 +91,14 @@ public class DataRepository {
                 }
             });
         }
+    }
+
+    public static boolean checkLogged(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null)
+            return true;
+        else
+            return false;
     }
 
     private boolean isValidEmail(String email) {
