@@ -42,7 +42,7 @@
         style="@style/Theme.ParkingLKS.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="45dp"
         android:hint="Ingresa tu email*"
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/subTitle">
@@ -59,7 +59,7 @@
         style="@style/Theme.ParkingLKS.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="20dp"
         android:hint="Ingresa tu contraseña*"
         android:inputType="textPassword"
         app:endIconMode="password_toggle"
@@ -107,18 +107,31 @@
             android:textSize="15sp"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/changePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="He olvidado mi contraseña"
+        android:textStyle="bold|italic"
+        android:textSize="18dp"
+        android:textColor="@color/light_blue"
+        android:textAlignment="viewEnd"
+        app:layout_constraintTop_toBottomOf="@+id/checkboxLayout"
+        />
+
     <ImageButton
         android:id="@+id/googleLoginButton"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:src="@drawable/ic_google_logo"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerInside"
         android:contentDescription="Inicio de sesión mediante google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkboxLayout"
+        app:layout_constraintTop_toBottomOf="@+id/changePassword"
         />
 
     <TextView

@@ -74,6 +74,11 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        binding.changePassword.setOnClickListener(v->{
+            Intent intent = new Intent(LoginActivity.this, ChangePasswordActivity.class);
+            startActivity(intent);
+        });
+
         //Observamos la variable logged, la cual nos informara cuando el usuario intente hacer login y se
         //cambia de pantalla en caso de login correcto
         loginViewModel.isLogged().observe(this, logged -> {
