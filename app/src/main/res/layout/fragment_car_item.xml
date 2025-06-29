@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/txtMatricula"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:text="0000ABC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtTipo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Decapacitado"/>
+
+    <TextView
+        android:id="@+id/txtElectrico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="Sí"/>
+
+    <TextView
+        android:id="@+id/txtEtiqueta"
+        android:layout_marginTop="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cero Emisiones"/>
+
+    <Button
+        android:id="@+id/btnBorrar"
+        android:layout_marginTop="2dp"
+        android:text="Borrar"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/red"/>
+</LinearLayout>

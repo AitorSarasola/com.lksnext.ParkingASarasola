@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
-    android:padding="45dp"
+    android:padding="16dp"
     tools:context=".view.fragment.ProfileFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/helloName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="end|center_horizontal"
-        android:text="Hello, lorem_ipsum"
-        android:textSize="25sp"
-        android:layout_marginTop="70dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="120dp"
+        android:gravity="center_horizontal|end"
+        android:text="¡Hola, lorem_ipsum!"
+        android:textColor="@color/orange"
+        android:textSize="28sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/orange"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCoches"
+        android:layout_width="match_parent"
+        android:layout_marginTop="15dp"
+        android:layout_height="440dp"
+        android:background="@drawable/item_frame"
+        android:padding="8dp"
+        tools:listitem="@layout/fragment_car_item"
+        app:layout_constraintTop_toBottomOf="@id/helloName"/>
+
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="@color/red"
+        android:gravity="right"
+        android:text="CERRAR SESIÓN"
+        android:textAllCaps="true"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.884"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewCoches" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
