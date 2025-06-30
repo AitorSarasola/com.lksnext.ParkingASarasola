@@ -5,47 +5,127 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="45dp"
+    android:padding="40dp"
     tools:context=".view.fragment.ProfileFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/helloName"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="120dp"
-        android:gravity="center_horizontal|end"
-        android:text="¡Hola, lorem_ipsum!"
+        android:layout_height="100dp"
+        android:gravity="bottom|end"
+        android:text="TU PERFIL\n"
         android:textColor="@color/orange"
-        android:textSize="28sp"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/changePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Reestablecer Contraseña"
+        android:textSize="14dp"
+        android:textColor="@color/light_blue"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/helloName"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/CPMensaje"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mensaje Enviado"
+        android:textSize="20dp"
+        android:textStyle="bold|italic"
+        android:textColor="@color/light_blue"
+        android:gravity="right"
+        app:layout_constraintTop_toBottomOf="@id/changePassword"/>
+
+    <LinearLayout
+        android:id="@+id/botones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/CPMensaje"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/refreshButton"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/item_frame_small"
+            android:src="@drawable/ic_update"
+            android:contentDescription="Actualizar Lista"
+            android:scaleType="centerInside"
+        />
+
+        <Button
+            android:id="@+id/btn2"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="+ Agregar Coche"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:backgroundTint="@color/orange"
+            android:textColor="@android:color/white"
+            android:layout_margin="8dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/listaVaciaM"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:text="..."
+        android:textStyle="bold|italic"
+        android:textColor="@color/orange"
+        android:textSize="25dp"
+        android:gravity="center_vertical|center_horizontal"
+        app:layout_constraintTop_toTopOf="@id/recyclerViewCoches"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCoches"
         android:layout_width="match_parent"
-        android:layout_marginTop="15dp"
-        android:layout_height="440dp"
+        android:layout_height="360dp"
         android:background="@drawable/item_frame"
-        android:padding="8dp"
+        android:padding="15dp"
         tools:listitem="@layout/fragment_car_item"
-        app:layout_constraintTop_toBottomOf="@id/helloName"/>
+        android:contentDescription="Lista De Coches"
+        app:layout_constraintTop_toBottomOf="@id/botones"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <Button
-        android:id="@+id/logoutButton"
+    <LinearLayout
+        android:id="@+id/logoutButtonContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@color/red"
-        android:gravity="right"
-        android:text="CERRAR SESIÓN"
-        android:textAllCaps="true"
-        android:textSize="19sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.884"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewCoches" />
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="16dp"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:gravity="start"
+        android:background="@drawable/item_frame_red"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewCoches"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/logoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CERRAR SESIÓN"
+            android:textAllCaps="true"
+            android:textColor="@color/red"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:gravity="center" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.lksnext.parkingplantilla.databinding.ActivityChangePasswordBinding;
-import com.lksnext.parkingplantilla.databinding.ActivityLoginBinding;
 
 public class ChangePasswordActivity extends AppCompatActivity {
     private ActivityChangePasswordBinding binding;

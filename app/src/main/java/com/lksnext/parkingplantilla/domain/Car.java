@@ -1,6 +1,6 @@
 package com.lksnext.parkingplantilla.domain;
 
-import kotlin.time.ExperimentalTime;
+import android.widget.Switch;
 
 public class Car {
     public enum Type {
@@ -24,6 +24,30 @@ public class Car {
         this.matricula = matricula;
         this.tipo=tipo;
         this.etiqueta = etiqueta;
+        this.isElectrico = isElectrico;
+    }
+
+    public Car(String matricula, String tipo, String etiqueta, boolean isElectrico){
+        this.matricula = matricula;
+        switch(tipo){
+            case "Coche": this.tipo = Type.Coche;
+            break;
+            case "Moto": this.tipo = Type.Moto;
+            break;
+            default: this.tipo = Type.Coche_Para_Discapacitados;
+            break;
+        }
+
+        switch (etiqueta){
+            case "C": this.etiqueta = Label.C;
+            break;
+            case "B": this.etiqueta = Label.B;
+            break;
+            case "ECO": this.etiqueta = Label.ECO;
+            break;
+            default: this.etiqueta = Label.Cero_Emisiones;
+        }
+
         this.isElectrico = isElectrico;
     }
 
