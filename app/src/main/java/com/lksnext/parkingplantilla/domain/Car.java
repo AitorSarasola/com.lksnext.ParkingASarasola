@@ -5,8 +5,7 @@ import android.widget.Switch;
 public class Car {
     public enum Type {
         Coche,
-        Moto,
-        Coche_Para_Discapacitados
+        Moto
     }
 
     public enum Label {
@@ -18,24 +17,24 @@ public class Car {
     private String matricula;
     private Type tipo;
     private Label etiqueta;
+    private boolean isParaDiscapacitados;
     private boolean isElectrico;
 
-    public Car(String matricula, Type tipo, Label etiqueta, boolean isElectrico){
+    public Car(String matricula, Type tipo, Label etiqueta, boolean isParaDiscapacitados, boolean isElectrico){
         this.matricula = matricula;
         this.tipo=tipo;
         this.etiqueta = etiqueta;
+        this.isParaDiscapacitados = isParaDiscapacitados;
         this.isElectrico = isElectrico;
     }
 
-    public Car(String matricula, String tipo, String etiqueta, boolean isElectrico){
+    public Car(String matricula, String tipo, String etiqueta, boolean isParaDiscapacitados, boolean isElectrico){
         this.matricula = matricula;
         switch(tipo){
-            case "Coche": this.tipo = Type.Coche;
-            break;
             case "Moto": this.tipo = Type.Moto;
             break;
-            default: this.tipo = Type.Coche_Para_Discapacitados;
-            break;
+            default: this.tipo = Type.Coche;
+                break;
         }
 
         switch (etiqueta){
@@ -47,7 +46,7 @@ public class Car {
             break;
             default: this.etiqueta = Label.Cero_Emisiones;
         }
-
+        this.isParaDiscapacitados = isParaDiscapacitados;
         this.isElectrico = isElectrico;
     }
 
@@ -65,5 +64,9 @@ public class Car {
 
     public boolean isElectrico() {
         return isElectrico;
+    }
+
+    public boolean isParaDiscapacitados() {
+        return isParaDiscapacitados;
     }
 }

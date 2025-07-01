@@ -3,16 +3,11 @@ package com.lksnext.parkingplantilla.view.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
 
-import com.google.firebase.FirebaseApp;
 import com.lksnext.parkingplantilla.databinding.ActivityRegisterBinding;
-import com.lksnext.parkingplantilla.view.fragment.MainFragment;
 import com.lksnext.parkingplantilla.viewmodel.RegisterViewModel;
 
 public class RegisterActivity extends AppCompatActivity {

@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.CollectionReference;
 
 import android.content.SharedPreferences;
 import android.content.Context;
@@ -93,6 +94,42 @@ public class DataRepository {
         }
     }
 
+    public static void addCar(String matricula0, String type, String label, boolean disabled, boolean electric, Callback callback){
+        String matricula = deleteLastSpace(matricula0);
+        if(matricula.isEmpty() || type.equals("*Selecciona un tipo de vehículo ▼") || label.equals("*Selecciona una etiqueta ▼")){
+            callback.onFailure("Debes rellenar todos los campos");
+        }else if(!isValidLicensePlate(matricula)){
+            callback.onFailure("La matrícula no es válida");}
+        else{
+            String matricula_ = standarizeLicensePlate(matricula);
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+
+            CollectionReference cochesRef = FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(auth.getCurrentUser().getUid())
+                    .collection("Coches");
+            // Comprobar si la matrícula ya existe
+            cochesRef.whereEqualTo("Matricula", matricula_).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                    callback.onFailure();
+                } else {
+                    // Si no existe, guardar el coche
+                    HashMap<String, Object> coche = new HashMap<>();
+                    coche.put("Matricula", matricula_);
+                    coche.put("Type", type);
+                    coche.put("Label", label);
+                    coche.put("isParaDiscapacitados", disabled);
+                    coche.put("isElectrico", electric);
+
+                    cochesRef.add(coche)
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onFailure("Error al guardar el coche. Intentelo de nuevo más tarde."));
+                }
+            });
+        }
+    }
+
     public static boolean checkLogged(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null)
@@ -121,8 +158,21 @@ public class DataRepository {
         Matcher matcher = pattern.matcher(pass);
         return matcher.matches();
     }
+    private static boolean isValidLicensePlate(String plate) {
+        String licensePlateRegex = "^[0-9]{4}[ -]?[A-PR-Z]{3}$";
+        Pattern pattern = Pattern.compile(licensePlateRegex);
+        Matcher matcher = pattern.matcher(plate);
+        return matcher.matches();
+    }
 
-    public String deleteLastSpace(String s) {
+    private static String standarizeLicensePlate(String plate) {
+        // Eliminar espacios y guiones
+        plate = plate.replaceAll("[ -]", "");
+        // Formatear a XXXX-YYY
+        return plate.substring(0, 4) + "-" + plate.substring(4);
+    }
+
+    public static String deleteLastSpace(String s) {
         if (s != null && !s.isEmpty() && s.charAt(s.length() - 1) == ' ') {
             return s.substring(0, s.length() - 1);
         }

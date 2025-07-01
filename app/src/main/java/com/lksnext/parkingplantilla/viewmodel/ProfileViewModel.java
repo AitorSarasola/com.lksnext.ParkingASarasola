@@ -37,10 +37,11 @@ public class ProfileViewModel extends ViewModel {
                         String matricula = doc.getString("Matricula");
                         Log.d("FirebaseCoches","Matricula: "+matricula);
                         String type = doc.getString("Type");
+                        Boolean isParaDiscapacitados = doc.getBoolean("isParaDiscapacitados");
                         Boolean isElectrico = doc.getBoolean("isElectrico");
                         String label = doc.getString("Label");
 
-                        Car car = new Car(matricula, type, label, isElectrico != null ? isElectrico : false);
+                        Car car = new Car(matricula, type, label,isParaDiscapacitados != null ? isParaDiscapacitados : false ,isElectrico != null ? isElectrico : false);
                         L.add(car);
                     }
                     listaCoches.setValue(L);

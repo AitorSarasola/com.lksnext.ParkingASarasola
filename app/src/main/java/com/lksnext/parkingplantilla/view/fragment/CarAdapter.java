@@ -36,9 +36,9 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
     public void onBindViewHolder(@NonNull CarViewHolder holder, int position) {
         Car car = carList.get(position);
 
-        holder.txtMatricula.setText("Matrícula:\n" + car.getMatricula());
-        holder.txtTipo.setText(car.getType().toString().replace('_',' '));
+        holder.txtTypeMatricula.setText(car.getType().toString().toUpperCase()+"\n" + car.getMatricula());
         holder.txtElectrico.setText("Eléctrico: " + (car.isElectrico() ? "Sí" : "No"));
+        holder.txtDiscapacitados.setText("Para Discapacitados: " + (car.isParaDiscapacitados() ? "Sí" : "No"));
         String label = car.getEtiqueta().toString().replace('_',' ');
         if(label.length()>5)
             label = "\n"+label;
@@ -51,13 +51,20 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
             case Moto:
                 holder.carTypeImage.setImageResource(R.drawable.ic_motorbike);
                 break;
-            case Coche_Para_Discapacitados:
-                holder.carTypeImage.setImageResource(R.drawable.ic_disabled_car);
-                break;
         }
 
-        if(!car.isElectrico()){
-            holder.carElectric.setImageResource(0);
+        if(car.isElectrico() && car.isParaDiscapacitados()){
+            holder.icon1.setImageResource(R.drawable.ic_disabled_vehicle);
+            holder.icon2.setImageResource(R.drawable.ic_electric);
+        }else if(car.isElectrico()){
+            holder.icon1.setImageResource(R.drawable.ic_electric);
+            holder.icon2.setImageResource(0);
+        }else if(car.isParaDiscapacitados()){
+            holder.icon1.setImageResource(R.drawable.ic_disabled_vehicle);
+            holder.icon2.setImageResource(0);
+        }else{
+            holder.icon1.setImageResource(0);
+            holder.icon2.setImageResource(0);
         }
 
         holder.btnBorrar.setOnClickListener(v -> {
@@ -80,19 +87,20 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
     }
 
     static class CarViewHolder extends RecyclerView.ViewHolder {
-        TextView txtMatricula, txtTipo, txtElectrico, txtEtiqueta;
-        ImageView carTypeImage, carElectric;
+        TextView txtTypeMatricula, txtTipo, txtElectrico, txtEtiqueta, txtDiscapacitados;
+        ImageView carTypeImage, icon1, icon2;
         Button btnBorrar;
 
         public CarViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtMatricula = itemView.findViewById(R.id.txtMatricula);
-            txtTipo = itemView.findViewById(R.id.txtTipo);
+            txtTypeMatricula = itemView.findViewById(R.id.txtMatricula);
+            txtDiscapacitados = itemView.findViewById(R.id.txtDiscapacitados);
             txtElectrico = itemView.findViewById(R.id.txtElectrico);
             txtEtiqueta = itemView.findViewById(R.id.txtEtiqueta);
             btnBorrar = itemView.findViewById(R.id.btnBorrar);
             carTypeImage = itemView.findViewById(R.id.carTypeImage);
-            carElectric = itemView.findViewById(R.id.carElectric);
+            icon1 = itemView.findViewById(R.id.icon1);
+            icon2 = itemView.findViewById(R.id.icon2);
         }
     }
 }

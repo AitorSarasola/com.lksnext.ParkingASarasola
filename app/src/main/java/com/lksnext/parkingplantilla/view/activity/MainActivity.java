@@ -50,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+
+        // Lee el extra para navegar al perfil
+        boolean navigateToProfile = getIntent().getBooleanExtra("navigateToProfile", false);
+        if (navigateToProfile) {
+            navController.navigate(R.id.profileFragment);
+            bottomNavigationView.setSelectedItemId(R.id.person);
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.databinding.FragmentProfileBinding;
+import com.lksnext.parkingplantilla.view.activity.AddCarActivity;
 import com.lksnext.parkingplantilla.view.activity.LoginActivity;
 import com.lksnext.parkingplantilla.viewmodel.ProfileViewModel;
 
@@ -30,6 +33,7 @@ public class ProfileFragment extends Fragment {
     private RecyclerView recyclerView;
 
     private ProfileViewModel profileViewModel;
+    private boolean doubleClick = false;
 
     public ProfileFragment() {
         // Constructor vacío necesario
@@ -45,6 +49,7 @@ public class ProfileFragment extends Fragment {
 
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         binding.CPMensaje.setText("");
+        binding.singoutText.setText("");
 
         profileViewModel.cargarCoches();
 
@@ -102,9 +107,13 @@ public class ProfileFragment extends Fragment {
                 auth.sendPasswordResetEmail(email)
                         .addOnCompleteListener(task->{
                             if(task.isSuccessful()){
-                                binding.CPMensaje.setText("Mensaje Envidado.");
+                                int color = ContextCompat.getColor(getActivity(), R.color.light_blue);
+                                binding.CPMensaje.setTextColor(color);
+                                binding.CPMensaje.setText("Mensaje Envidado. ");
                             }else{
-                                binding.CPMensaje.setText("Error, espera un poco antes de reintentar.");
+                                int color = ContextCompat.getColor(getActivity(), R.color.red);
+                                binding.CPMensaje.setTextColor(color);
+                                binding.CPMensaje.setText("Error, espera un poco y reintentalo. ");
                             }
                         });
             }else
@@ -112,10 +121,20 @@ public class ProfileFragment extends Fragment {
         } );
 
         binding.logoutButton.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            if(doubleClick){
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }else{
+                binding.singoutText.setText("CERRAR\nSESIÓN");
+                doubleClick = true;
+            }
+        });
+
+        binding.addCar.setOnClickListener(v->{
+            Intent intent = new Intent(getActivity(), AddCarActivity.class);
             startActivity(intent);
-            getActivity().finish();
         });
 
         return root;
