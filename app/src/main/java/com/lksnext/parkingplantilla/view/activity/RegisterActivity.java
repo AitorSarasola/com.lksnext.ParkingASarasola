@@ -1,17 +1,13 @@
 package com.lksnext.parkingplantilla.view.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
 
-import com.google.firebase.FirebaseApp;
 import com.lksnext.parkingplantilla.databinding.ActivityRegisterBinding;
-import com.lksnext.parkingplantilla.view.fragment.MainFragment;
 import com.lksnext.parkingplantilla.viewmodel.RegisterViewModel;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -49,8 +45,14 @@ public class RegisterActivity extends AppCompatActivity {
             if (signedUp != null) {
                 if (signedUp) {
                     //Login Correcto
+                    SharedPreferences preferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean("keepSignedIn", binding.checkbox.isChecked());
+                    editor.apply();
+
                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });

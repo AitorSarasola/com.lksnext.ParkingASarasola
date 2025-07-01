@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">ParkingPlantilla</string>
+    <string name="app_name">ParkingLKS</string>
 
     <string name="selectDate">Selecciona una fecha</string>
     <string name="welcome">WELCOME</string>
+
+    <string name="default_web_client_id">437251664374-gd21c6ab6qkaf0ovd8lv5ukf9tb4mh4f.apps.googleusercontent.com</string>
 
     <string name="fragment_main">Main</string>
     <string name="fragment_step1">Step 1</string>

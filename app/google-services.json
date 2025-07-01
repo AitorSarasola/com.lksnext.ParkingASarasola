@@ -12,7 +12,12 @@
           "package_name": "com.lksnext.ParkingASarasola"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "437251664374-gd21c6ab6qkaf0ovd8lv5ukf9tb4mh4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA5UBb-WyGTE-nHc5J8xAYRLHwaA6sXDLA"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "437251664374-gd21c6ab6qkaf0ovd8lv5ukf9tb4mh4f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

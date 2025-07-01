@@ -45,10 +45,18 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.reservations) {
                 //TODO
             } else if (itemId == R.id.person) {
-                //TODO
+                navController.navigate(R.id.profileFragment);
+                return true;
             }
             return false;
         });
+
+        // Lee el extra para navegar al perfil
+        boolean navigateToProfile = getIntent().getBooleanExtra("navigateToProfile", false);
+        if (navigateToProfile) {
+            navController.navigate(R.id.profileFragment);
+            bottomNavigationView.setSelectedItemId(R.id.person);
+        }
     }
 
     @Override
