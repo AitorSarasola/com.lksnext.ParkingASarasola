@@ -116,6 +116,7 @@ public class DataRepository {
 
     public static void addCar(String matricula0, String type, String label, boolean disabled, boolean electric, Callback callback){
         String matricula = deleteLastSpace(matricula0);
+        matricula = matricula.toUpperCase();
         if(matricula.isEmpty() || type.equals("*Selecciona un tipo de vehículo ▼") || label.equals("*Selecciona una etiqueta ▼")){
             callback.onFailure("Debes rellenar todos los campos");
         }else if(!isValidLicensePlate(matricula)){
@@ -166,7 +167,7 @@ public class DataRepository {
     }
 
     private boolean isValidUser(String user) {
-        String userRegex = "^[a-zA-Z0-9_ ]{3,USERNAME_MAX_LENGTH}$";
+        String userRegex = "^[a-zA-Z0-9_ ]{3,"+USERNAME_MAX_LENGTH+"}$";
         Pattern pattern = Pattern.compile(userRegex);
         Matcher matcher = pattern.matcher(user);
         return matcher.matches();

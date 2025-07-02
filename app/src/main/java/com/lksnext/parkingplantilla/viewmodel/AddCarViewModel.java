@@ -1,10 +1,17 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.lksnext.parkingplantilla.data.DataRepository;
 import com.lksnext.parkingplantilla.domain.Callback;
+import com.lksnext.parkingplantilla.view.activity.ChangePasswordActivity;
+import com.lksnext.parkingplantilla.view.activity.LoginActivity;
+
 public class AddCarViewModel extends ViewModel {
     static MutableLiveData<Boolean> ultimoCocheGuardado = new MutableLiveData<>(null);
     static MutableLiveData<String> error = new MutableLiveData<>(null);
@@ -27,18 +34,30 @@ public class AddCarViewModel extends ViewModel {
             public void onSuccess() {
                 //TODO
                 ultimoCocheGuardado.setValue(Boolean.TRUE);
+                resetUltimoCocheGuardadoDelay(2000);
             }
             @Override
             public void onFailure(String errorM) {
                 //TODO
                 error.setValue(errorM);
                 ultimoCocheGuardado.setValue(Boolean.FALSE);
+                resetUltimoCocheGuardadoDelay(10000);
             }
             @Override
             public void onFailure(){
                 error.setValue("Error, el vehículo ya existe.");
                 ultimoCocheGuardado.setValue(Boolean.FALSE);
+                resetUltimoCocheGuardadoDelay(10000);
             }
         });
+    }
+
+    private void resetUltimoCocheGuardadoDelay(int delay) {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ultimoCocheGuardado.setValue(null);
+            }
+        }, delay);
     }
 }
