@@ -33,6 +33,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void loginUser(String email, String password) {
+        logged.setValue(null);
         //Clase para comprobar si los datos de inicio de sesión son correctos o no
         DataRepository.getInstance().login(email, password, new Callback() {
             //En caso de que el login sea correcto, que se hace

@@ -2,6 +2,8 @@ package com.lksnext.parkingplantilla.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.databinding.FragmentProfileBinding;
 import com.lksnext.parkingplantilla.view.activity.AddCarActivity;
+import com.lksnext.parkingplantilla.view.activity.ChangePasswordActivity;
 import com.lksnext.parkingplantilla.view.activity.LoginActivity;
 import com.lksnext.parkingplantilla.viewmodel.ProfileViewModel;
 
@@ -33,8 +35,6 @@ public class ProfileFragment extends Fragment {
     private RecyclerView recyclerView;
 
     private ProfileViewModel profileViewModel;
-    private boolean doubleClick = false;
-
     public ProfileFragment() {
         // Constructor vacío necesario
     }
@@ -100,35 +100,25 @@ public class ProfileFragment extends Fragment {
         });
 
         binding.changePassword.setOnClickListener(v ->{
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            FirebaseUser user = auth.getCurrentUser();
-            if(user != null){
-                String email = user.getEmail();
-                auth.sendPasswordResetEmail(email)
-                        .addOnCompleteListener(task->{
-                            if(task.isSuccessful()){
-                                int color = ContextCompat.getColor(getActivity(), R.color.light_blue);
-                                binding.CPMensaje.setTextColor(color);
-                                binding.CPMensaje.setText("Mensaje Envidado. ");
-                            }else{
-                                int color = ContextCompat.getColor(getActivity(), R.color.red);
-                                binding.CPMensaje.setTextColor(color);
-                                binding.CPMensaje.setText("Error, espera un poco y reintentalo. ");
-                            }
-                        });
-            }else
-                Log.e("ChangePassword", "UserNotAuth");
+            profileViewModel.changeCurrentUserPass();
         } );
 
         binding.logoutButton.setOnClickListener(v -> {
-            if(doubleClick){
+            if(profileViewModel.isLogout().getValue()){
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
                 getActivity().finish();
             }else{
+                profileViewModel.logout();
+            }
+        });
+
+        profileViewModel.isLogout().observe(getActivity(), logout->{
+            if(logout != null && logout){
                 binding.singoutText.setText("CERRAR\nSESIÓN");
-                doubleClick = true;
+            }else{
+                binding.singoutText.setText("");
             }
         });
 
@@ -136,6 +126,27 @@ public class ProfileFragment extends Fragment {
             Intent intent = new Intent(getActivity(), AddCarActivity.class);
             startActivity(intent);
         });
+
+        profileViewModel.isSent().observe(getActivity(), sent -> {
+            if (sent != null) {
+                if (sent) {
+                    binding.CPMensaje.setText("Mensaje Enviado. ");
+                    binding.CPMensaje.setTextColor(ContextCompat.getColor(getActivity(), R.color.light_blue));
+                } else {
+                    binding.CPMensaje.setText(profileViewModel.getError().getValue());
+                    binding.CPMensaje.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
+                }
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.CPMensaje.setText("");
+                    }
+                }, 2000);
+            }else{
+                binding.CPMensaje.setText("");
+            }
+        });
+
 
         return root;
     }

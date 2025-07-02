@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 public class DataRepository {
 
     private static DataRepository instance;
+    private static final int USERNAME_MAX_LENGTH = 20;
     private DataRepository(){
 
     }
@@ -58,10 +59,10 @@ public class DataRepository {
         //Realizar petición
         if (email_.isEmpty() || pass1.isEmpty() || pass2.isEmpty() || user_.isEmpty()){
             callback.onFailure("Debes rellenar todos los campos.");
-        }else if(user_.length() < 3 || user_.length() > 20){
-            callback.onFailure("El nombre de usuario debe tener entre 3 y 20 caracteres.");
+        }else if(user_.length() < 3 || user_.length() > USERNAME_MAX_LENGTH){
+            callback.onFailure("El nombre de usuario debe tener entre 3 y "+USERNAME_MAX_LENGTH+" caracteres.");
         }else if(!isValidUser(user_)){
-            callback.onFailure("El nombre de usuario solo puede contener letras, números y barras bajas.");
+            callback.onFailure("El nombre de usuario solo puede contener letras, números, barra bajas y espacios.");
         }else if(! isValidEmail(email_) ){
             callback.onFailure("El email_ no es válido.");
         }else if (!pass1.equals(pass2)){
@@ -88,6 +89,25 @@ public class DataRepository {
                                 callback.onFailure();
                             });
                 } else {
+                    callback.onFailure();
+                }
+            });
+        }
+    }
+
+    public static void changePassword(String email_, Callback callback){
+        String email = deleteLastSpace(email_);
+        if(email.isEmpty()){
+            callback.onFailure("El email no puede estar vacío.");
+        }else if(!isValidEmail(email)){
+            callback.onFailure("El email no es válido.");
+        }else{
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    Log.d("CHANGEPASS", "BIEN");
+                    callback.onSuccess();
+                }else{
+                    Log.d("CHANGEPASS", "MAL");
                     callback.onFailure();
                 }
             });
@@ -138,7 +158,7 @@ public class DataRepository {
             return false;
     }
 
-    private boolean isValidEmail(String email) {
+    private static boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
@@ -146,7 +166,7 @@ public class DataRepository {
     }
 
     private boolean isValidUser(String user) {
-        String userRegex = "^[a-zA-Z0-9_]{3,20}$";
+        String userRegex = "^[a-zA-Z0-9_ ]{3,USERNAME_MAX_LENGTH}$";
         Pattern pattern = Pattern.compile(userRegex);
         Matcher matcher = pattern.matcher(user);
         return matcher.matches();

@@ -94,6 +94,8 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
+            }else{
+                binding.errorLogin.setText("");
             }
         });
 

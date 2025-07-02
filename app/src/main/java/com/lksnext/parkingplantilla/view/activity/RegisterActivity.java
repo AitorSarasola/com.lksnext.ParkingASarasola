@@ -54,7 +54,9 @@ public class RegisterActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
-            }
+            }else{
+            binding.errorRegister.setText("");
+        }
         });
 
         registerViewModel.getError().observe(this, errorMsg -> {
