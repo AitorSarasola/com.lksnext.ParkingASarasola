@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="10dp"
-            android:hint="*Matrícula (ej.: ABCD-123)"
+            android:hint="*Matrícula (ej.: 1234-ABC)"
             android:textColorHint="@color/grey"
             android:inputType="text"
             android:textSize="22dp" />
