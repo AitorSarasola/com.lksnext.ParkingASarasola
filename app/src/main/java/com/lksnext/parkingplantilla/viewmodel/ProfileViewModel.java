@@ -1,6 +1,5 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -17,8 +16,6 @@ import com.lksnext.parkingplantilla.domain.Car;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.CollectionReference;
-import com.lksnext.parkingplantilla.view.activity.ChangePasswordActivity;
-import com.lksnext.parkingplantilla.view.activity.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -85,11 +82,8 @@ public class ProfileViewModel extends ViewModel {
                     for (DocumentSnapshot doc : querySnapshot) {
                         // Eliminar el documento encontrado
                         doc.getReference().delete()
-                                .addOnSuccessListener(aVoid -> {
-                                    cargarCoches();  // Recargar la lista
-                                })
-                                .addOnFailureListener(e -> {
-                                });
+                                .addOnSuccessListener(aVoid -> cargarCoches())
+                                .addOnFailureListener(e -> Log.d("ProfileViewModel", "Error al eliminar el coche: " + e.getMessage()));
                         break;  // Asumimos que solo hay uno con esa matrícula
                     }
                 })
@@ -129,9 +123,8 @@ public class ProfileViewModel extends ViewModel {
 
     public void logout() {
         logout.setValue(true);
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            logout.setValue(null);
-        }, 2000);
+        new Handler(Looper.getMainLooper()).postDelayed(() ->
+            logout.setValue(null), 2000);
     }
 
 }

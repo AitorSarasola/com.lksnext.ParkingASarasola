@@ -1,7 +1,5 @@
 package com.lksnext.parkingplantilla.domain;
 
-import com.google.firebase.firestore.MemoryLruGcSettings;
-
 public class Car {
     public enum Type {
         COCHE,
@@ -30,7 +28,7 @@ public class Car {
 
     public Car(String matricula, String tipo, String etiqueta, boolean isParaDiscapacitados, boolean isElectrico){
         this.matricula = matricula;
-        if(tipo=="Moto")
+        if(tipo.toUpperCase().equals("MOTO"))
             this.tipo = Type.MOTO;
         else
             this.tipo = Type.COCHE;

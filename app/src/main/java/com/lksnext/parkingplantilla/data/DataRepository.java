@@ -29,18 +29,18 @@ public class DataRepository {
 
     //Petición del login.
     public void login(String email, String pass, Callback callback){
-        String email_lag = deleteLastSpace(email);
+        String emailLag = deleteLastSpace(email);
         //Realizar petición
-        if (email_lag.isEmpty() && pass.isEmpty()){
+        if (emailLag.isEmpty() && pass.isEmpty()){
             callback.onFailure("El email y la contraseña no pueden estar vacíos.");
-        }else if (email_lag.isEmpty()){
+        }else if (emailLag.isEmpty()){
             callback.onFailure("El email no puede estar vacío.");
         }else if(pass.isEmpty()){
             callback.onFailure("La contraseña no puede estar vacía.");
-        }else if(! isValidEmail(email_lag) ){
+        }else if(! isValidEmail(emailLag) ){
             callback.onFailure("El email no es válido.");
         }else{
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email_lag,pass).addOnCompleteListener(task ->{
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(emailLag,pass).addOnCompleteListener(task ->{
                 if(task.isSuccessful()){
                     callback.onSuccess();
                 }else{
@@ -51,16 +51,16 @@ public class DataRepository {
     }
 
     public void register(String user, String email, String pass1, String pass2, Callback callback){
-        String user_lag = deleteLastSpace(user);
-        String email_lag = deleteLastSpace(email);
+        String userLag = deleteLastSpace(user);
+        String emailLag = deleteLastSpace(email);
         //Realizar petición
-        if (email_lag.isEmpty() || pass1.isEmpty() || pass2.isEmpty() || user_lag.isEmpty()){
+        if (emailLag.isEmpty() || pass1.isEmpty() || pass2.isEmpty() || userLag.isEmpty()){
             callback.onFailure("Debes rellenar todos los campos.");
-        }else if(user_lag.length() < 3 || user_lag.length() > USERNAME_MAX_LENGTH){
+        }else if(userLag.length() < 3 || userLag.length() > USERNAME_MAX_LENGTH){
             callback.onFailure("El nombre de usuario debe tener entre 3 y "+USERNAME_MAX_LENGTH+" caracteres.");
-        }else if(!isValidUser(user_lag)){
+        }else if(!isValidUser(userLag)){
             callback.onFailure("El nombre de usuario solo puede contener letras, números, barra bajas y espacios.");
-        }else if(! isValidEmail(email_lag) ){
+        }else if(! isValidEmail(emailLag) ){
             callback.onFailure("El email no es válido.");
         }else if (!pass1.equals(pass2)){
             callback.onFailure("Las contraseñas no coinciden.");
@@ -72,11 +72,11 @@ public class DataRepository {
             FirebaseAuth auth = FirebaseAuth.getInstance();
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
-            auth.createUserWithEmailAndPassword(email_lag, pass1).addOnCompleteListener(task -> {
+            auth.createUserWithEmailAndPassword(emailLag, pass1).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     String id = auth.getCurrentUser().getUid();
                     HashMap<String, Object> userMap = new HashMap<>();
-                    userMap.put("name",user_lag);
+                    userMap.put("name",userLag);
                     firestore.collection("users").document(id).set(userMap)
                             .addOnSuccessListener(aVoid ->{
                                 Log.d("Firestore", "Datos guardados correctamente");
@@ -93,13 +93,13 @@ public class DataRepository {
     }
 
     public static void changePassword(String email, Callback callback){
-        String email_lag = deleteLastSpace(email);
-        if(email_lag.isEmpty()){
+        String emailLag = deleteLastSpace(email);
+        if(emailLag.isEmpty()){
             callback.onFailure("El email no puede estar vacío.");
+        }else if(!isValidEmail(emailLag)){
             callback.onFailure("El email no es válido.");
-        }else if(!isValidEmail(email_lag)){
         }else{
-            FirebaseAuth.getInstance().sendPasswordResetEmail(email_lag).addOnCompleteListener(task -> {
+            FirebaseAuth.getInstance().sendPasswordResetEmail(emailLag).addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     Log.d("CHANGEPASS", "BIEN");
                     callback.onSuccess();
@@ -119,7 +119,7 @@ public class DataRepository {
         }else if(!isValidLicensePlate(matricula)){
             callback.onFailure("La matrícula no es válida");}
         else{
-            String matricula_lag = standarizeLicensePlate(matricula);
+            String matriculaLag = standarizeLicensePlate(matricula);
             FirebaseAuth auth = FirebaseAuth.getInstance();
 
             CollectionReference cochesRef = FirebaseFirestore.getInstance()
@@ -127,13 +127,13 @@ public class DataRepository {
                     .document(auth.getCurrentUser().getUid())
                     .collection("Coches");
             // Comprobar si la matrícula ya existe
-            cochesRef.whereEqualTo("Matricula", matricula_lag).get().addOnCompleteListener(task -> {
+            cochesRef.whereEqualTo("Matricula", matriculaLag).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful() && !task.getResult().isEmpty()) {
                     callback.onFailure();
                 } else {
                     // Si no existe, guardar el coche
                     HashMap<String, Object> coche = new HashMap<>();
-                    coche.put("Matricula", matricula_lag);
+                    coche.put("Matricula", matriculaLag);
                     coche.put("Type", type);
                     coche.put("Label", label);
                     coche.put("isParaDiscapacitados", disabled);

@@ -39,13 +39,17 @@ public class ChangePasswordActivity extends AppCompatActivity {
         binding.buttonRegresar.setOnClickListener(v->{
             Intent intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
         });
 
         changePasswordViewModel.isSent().observe(this, sent -> {
             if (sent != null) {
                 if (sent) {
+                    binding.changePassword.setEnabled(false);
+                    binding.changePassword.setAlpha(0.5f);
                     binding.confirmM.setText("Mensaje Enviado, Recibirás el mensaje si hay una cuenta asociada al email.");
                     binding.confirmM.setTextColor(ContextCompat.getColor(this, R.color.light_blue));
+                    finish();
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         Intent intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
                         startActivity(intent);

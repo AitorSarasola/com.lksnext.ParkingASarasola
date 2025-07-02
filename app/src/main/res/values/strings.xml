@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ParkingLKS</string>
+    <string name="app_name">Par-King</string>
 
     <string name="selectDate">Selecciona una fecha</string>
     <string name="welcome">WELCOME</string>
@@ -13,4 +13,8 @@
     <string name="buscar">Buscar plazas libres</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="TipoVehiculo">Tipo de vehículo</string>
+    <string name="EtiquetaMedioambiental">Etiqueta medioambiental</string>
+    <string name="CargadorElectrico">Cargador Electrico</string>
 </resources>

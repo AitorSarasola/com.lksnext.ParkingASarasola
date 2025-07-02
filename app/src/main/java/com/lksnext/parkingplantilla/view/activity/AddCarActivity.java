@@ -2,7 +2,6 @@ package com.lksnext.parkingplantilla.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -67,8 +66,8 @@ public class AddCarActivity extends AppCompatActivity{
 
         binding.buttonGuardar.setOnClickListener(v->{
             String matricula = binding.editTextMatricula.getText().toString();
-            String tipo = binding.spinnerTipoVehiculo.getSelectedItem().toString();
-            String label = binding.spinnerLabel.getSelectedItem().toString();
+            String tipo = binding.spinnerTipoVehiculo.getSelectedItem().toString().toUpperCase();
+            String label = binding.spinnerLabel.getSelectedItem().toString().toUpperCase();
             boolean isParaDiscapacitados = binding.checkboxIsDisabled.isChecked();
             boolean isElectrico = binding.checkboxIsElectric.isChecked();
 

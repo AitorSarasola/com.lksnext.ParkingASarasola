@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +18,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.databinding.FragmentProfileBinding;
 import com.lksnext.parkingplantilla.view.activity.AddCarActivity;
-import com.lksnext.parkingplantilla.view.activity.ChangePasswordActivity;
 import com.lksnext.parkingplantilla.view.activity.LoginActivity;
 import com.lksnext.parkingplantilla.viewmodel.ProfileViewModel;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.OnFailureListener;
+
 
 public class ProfileFragment extends Fragment {
 
@@ -75,8 +71,7 @@ public class ProfileFragment extends Fragment {
 
             if (listaCoches != null) {
                 CarAdapter cocheAdapter = new CarAdapter(listaCoches, car ->
-                        profileViewModel.deleteCar(car)
-                );
+                        profileViewModel.deleteCar(car));
                 recyclerView.setAdapter(cocheAdapter);
             }
         });
@@ -90,7 +85,7 @@ public class ProfileFragment extends Fragment {
         );
 
         binding.logoutButton.setOnClickListener(v -> {
-            if(profileViewModel.isLogout().getValue() == true){
+            if(profileViewModel.isLogout().getValue().equals(Boolean.TRUE)){
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
@@ -122,9 +117,8 @@ public class ProfileFragment extends Fragment {
                     binding.CPMensaje.setText(profileViewModel.getError().getValue());
                     binding.CPMensaje.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
                 }
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    binding.CPMensaje.setText("");
-                }, 2000);
+                new Handler(Looper.getMainLooper()).postDelayed(() ->
+                    binding.CPMensaje.setText(""), 2000);
             }else{
                 binding.CPMensaje.setText("");
             }

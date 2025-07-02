@@ -113,6 +113,7 @@
             android:layout_height="45dp"
             android:background="@drawable/item_frame_small"
             android:src="@drawable/ic_update"
+            android:padding="2dp"
             android:contentDescription="Actualizar Lista"
             android:scaleType="centerInside"
         />

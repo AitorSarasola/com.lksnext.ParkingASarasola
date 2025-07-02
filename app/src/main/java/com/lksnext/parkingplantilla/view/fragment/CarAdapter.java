@@ -49,19 +49,11 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
         else
             holder.carTypeImage.setImageResource(R.drawable.ic_motorbike);
 
-        if(car.isElectrico() && car.isParaDiscapacitados()){
-            holder.icon1.setImageResource(R.drawable.ic_disabled_vehicle);
-            holder.icon2.setImageResource(R.drawable.ic_electric);
-        }else if(car.isElectrico()){
-            holder.icon1.setImageResource(R.drawable.ic_electric);
-            holder.icon2.setImageResource(0);
-        }else if(car.isParaDiscapacitados()){
-            holder.icon1.setImageResource(R.drawable.ic_disabled_vehicle);
-            holder.icon2.setImageResource(0);
-        }else{
-            holder.icon1.setImageResource(0);
-            holder.icon2.setImageResource(0);
-        }
+        if(car.isParaDiscapacitados())
+            holder.icon1.setVisibility(View.GONE);
+
+        if(car.isElectrico())
+            holder.icon2.setVisibility(View.GONE);
 
         holder.btnBorrar.setOnClickListener(v -> {
             if(deleteListener != null){
@@ -83,8 +75,13 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
     }
 
     static class CarViewHolder extends RecyclerView.ViewHolder {
-        TextView txtTypeMatricula, txtElectrico, txtEtiqueta, txtDiscapacitados;
-        ImageView carTypeImage, icon1, icon2;
+        TextView txtTypeMatricula;
+        TextView txtElectrico;
+        TextView txtEtiqueta;
+        TextView txtDiscapacitados;
+        ImageView carTypeImage;
+        ImageView icon1;
+        ImageView icon2;
         Button btnBorrar;
 
         public CarViewHolder(@NonNull View itemView) {

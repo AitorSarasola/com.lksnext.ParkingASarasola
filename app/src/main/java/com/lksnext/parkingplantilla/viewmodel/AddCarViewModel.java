@@ -1,6 +1,5 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -9,8 +8,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.lksnext.parkingplantilla.data.DataRepository;
 import com.lksnext.parkingplantilla.domain.Callback;
-import com.lksnext.parkingplantilla.view.activity.ChangePasswordActivity;
-import com.lksnext.parkingplantilla.view.activity.LoginActivity;
 
 public class AddCarViewModel extends ViewModel {
     static MutableLiveData<Boolean> ultimoCocheGuardado = new MutableLiveData<>(null);
@@ -51,8 +48,7 @@ public class AddCarViewModel extends ViewModel {
     }
 
     private void resetUltimoCocheGuardadoDelay(int delay) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            ultimoCocheGuardado.setValue(null);
-        }, delay);
+        new Handler(Looper.getMainLooper()).postDelayed(() ->
+                ultimoCocheGuardado.setValue(null), delay);
     }
 }

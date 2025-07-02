@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/item_searcher_back"
+    android:padding="10dp">
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="5dp">
+
+    <ImageButton
+        android:id="@+id/refreshButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="2dp"
+        android:background="@drawable/item_frame_small"
+        android:src="@drawable/ic_update"
+        android:contentDescription="Actualizar Lista"
+        android:scaleType="centerInside"
+        />
+
+    <Spinner
+        android:id="@+id/spinner_coches"
+        android:layout_width="0dp"
+        android:layout_height="37dp"
+        android:layout_weight="1"
+        android:background="@drawable/item_frame_small"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
+
+    <Button
+        android:id="@+id/btn_aplicar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:text="Aplicar" />
+
+    </LinearLayout>
+
+        <!-- Línea horizontal naranja -->
+    <View
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:background="@color/orange"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginBottom="8dp">
+
+    <Spinner
+        android:id="@+id/spinner_tipo_vehiculo"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/item_frame_small"/>
+
+    <Spinner
+        android:id="@+id/spinnerEtiquetaMedioambiental"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_weight="2"
+        android:background="@drawable/item_frame_small"
+        android:layout_marginStart="8dp"/>
+
+    </LinearLayout>
+
+    <EditText
+    android:id="@+id/inDate"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="FECHA: DD-MM-YYYY"
+    android:textColorHint="@color/grey"
+    android:inputType="text"/>
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <EditText
+        android:id="@+id/inStartTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="Hora Inicial: HH:MM"
+        android:inputType="text"
+        android:textColorHint="@color/grey"
+        android:layout_marginEnd="25dp"/>
+
+    <EditText
+        android:id="@+id/inEndTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="Hora final: HH:MM"
+        android:textColorHint="@color/grey"
+        android:inputType="text" />
+
+    </LinearLayout>
+
+        <!-- Spinner etiqueta medioambiental mínima -->
+    <Spinner
+    android:id="@+id/spinnerCargadorElec"
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/item_frame_small"
+    android:layout_marginTop="3dp"/>
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="5dp">
+
+    <Spinner
+        android:id="@+id/spinner_discapacidad"
+        android:layout_width="0dp"
+        android:layout_height="37dp"
+        android:layout_weight="1"
+        android:background="@drawable/item_frame_small"
+        android:layout_marginEnd="8dp" />
+
+    <Button
+        android:id="@+id/btnBuscar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="22sp"
+    android:text="BUSCAR" />
+
+    </LinearLayout>
+
+</LinearLayout>
