@@ -32,13 +32,11 @@ public class AddCarViewModel extends ViewModel {
         DataRepository.getInstance().addCar(matricula,type,label,isParaDiscapacitados,isElectrico, new Callback(){
             @Override
             public void onSuccess() {
-                //TODO
                 ultimoCocheGuardado.setValue(Boolean.TRUE);
                 resetUltimoCocheGuardadoDelay(2000);
             }
             @Override
             public void onFailure(String errorM) {
-                //TODO
                 error.setValue(errorM);
                 ultimoCocheGuardado.setValue(Boolean.FALSE);
                 resetUltimoCocheGuardadoDelay(10000);
@@ -53,11 +51,8 @@ public class AddCarViewModel extends ViewModel {
     }
 
     private void resetUltimoCocheGuardadoDelay(int delay) {
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ultimoCocheGuardado.setValue(null);
-            }
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            ultimoCocheGuardado.setValue(null);
         }, delay);
     }
 }

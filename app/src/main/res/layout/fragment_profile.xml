@@ -29,7 +29,7 @@
             android:src="@drawable/ic_singout"
             android:contentDescription="Cerrar Sesión"
             android:scaleType="fitCenter"
-            android:padding="4dp" />
+            android:padding="5dp" />
 
         <TextView
             android:id="@+id/singoutText"

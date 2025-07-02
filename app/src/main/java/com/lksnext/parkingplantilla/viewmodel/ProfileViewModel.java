@@ -1,5 +1,6 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -16,11 +17,13 @@ import com.lksnext.parkingplantilla.domain.Car;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.CollectionReference;
+import com.lksnext.parkingplantilla.view.activity.ChangePasswordActivity;
+import com.lksnext.parkingplantilla.view.activity.LoginActivity;
 
 import java.util.ArrayList;
 
 public class ProfileViewModel extends ViewModel {
-    MutableLiveData<ArrayList<Car>> listaCoches = new MutableLiveData<ArrayList<Car>>();
+    MutableLiveData<ArrayList<Car>> listaCoches = new MutableLiveData<>();
     MutableLiveData<Boolean> logout = new MutableLiveData<>(false);
     MutableLiveData<Boolean> sent = new MutableLiveData<>(null);
 
@@ -42,7 +45,6 @@ public class ProfileViewModel extends ViewModel {
     public void cargarCoches() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d("FirebaseCoches","Start");
 
         db.collection("users")
                 .document(userId)
@@ -50,23 +52,20 @@ public class ProfileViewModel extends ViewModel {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<Car> L = new ArrayList<>();
-                    Log.d("FirebaseCoches","OnSuccessListener");
+
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         String matricula = doc.getString("Matricula");
-                        Log.d("FirebaseCoches","Matricula: "+matricula);
                         String type = doc.getString("Type");
                         Boolean isParaDiscapacitados = doc.getBoolean("isParaDiscapacitados");
                         Boolean isElectrico = doc.getBoolean("isElectrico");
                         String label = doc.getString("Label");
 
-                        Car car = new Car(matricula, type, label,isParaDiscapacitados != null ? isParaDiscapacitados : false ,isElectrico != null ? isElectrico : false);
+                        Car car = new Car(matricula, type, label,Boolean.TRUE.equals(isParaDiscapacitados), Boolean.TRUE.equals(isElectrico));
                         L.add(car);
                     }
                     listaCoches.setValue(L);
-                    Log.d("FirestoreCoches", "Coches cargados correctamente");
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("FirestoreCoches", "Error al cargar coches: " + e.getMessage());
                     listaCoches.setValue(new ArrayList<>());
                 });
     }
@@ -87,17 +86,14 @@ public class ProfileViewModel extends ViewModel {
                         // Eliminar el documento encontrado
                         doc.getReference().delete()
                                 .addOnSuccessListener(aVoid -> {
-                                    Log.d("Firestore", "Coche eliminado correctamente");
                                     cargarCoches();  // Recargar la lista
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e("Firestore", "Error eliminando coche: " + e.getMessage());
                                 });
                         break;  // Asumimos que solo hay uno con esa matrícula
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error buscando coche: " + e.getMessage());
                 });
     }
 
@@ -133,14 +129,9 @@ public class ProfileViewModel extends ViewModel {
 
     public void logout() {
         logout.setValue(true);
-        Log.d("LOGOUT_PROFILE", "Logout initiated");
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                logout.setValue(false);
-                Log.d("LOGOUT_PROFILE", "Logout ended");
-            }
-        }, 1000);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            logout.setValue(null);
+        }, 2000);
     }
 
 }
