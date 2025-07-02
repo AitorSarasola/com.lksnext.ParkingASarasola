@@ -80,7 +80,7 @@ public class ProfileFragment extends Fragment {
 
 
         profileViewModel.getListaCoches().observe(getViewLifecycleOwner(), listaCoches->{
-            if (listaCoches.equals(null) || listaCoches.isEmpty()){
+            if (listaCoches == null || listaCoches.isEmpty()){
                 binding.listaVaciaM.setText("No Hay Coches\nDisponibles");
             }else{
                 binding.listaVaciaM.setText("");
