@@ -20,6 +20,7 @@ public class RegisterViewModel extends ViewModel {
     public static MutableLiveData<String> getError() { return error; }
 
     public void registerUser(String user, String email, String password1, String password2) {
+        signedUp.setValue(null); // Reiniciar el estado de signedUp
         //Clase para comprobar si los datos de inicio de sesión son correctos o no
         DataRepository.getInstance().register(user, email, password1, password2, new Callback() {
             //En caso de que el login sea correcto, que se hace
