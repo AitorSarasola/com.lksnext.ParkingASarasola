@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 public class DataRepository {
 
     private static DataRepository instance;
-    private static final int USERNAME_MAX_LENGTH = 20;
     private DataRepository(){
 
     }
@@ -96,12 +95,12 @@ public class DataRepository {
         String email_lag = deleteLastSpace(email);
         if(email_lag.isEmpty()){
             callback.onFailure("El email no puede estar vacío.");
-        }else if(!isValidEmail(email_lag)){
             callback.onFailure("El email no es válido.");
+        }else if(!isValidEmail(email_lag)){
         }else{
-            FirebaseAuth.getInstance().sendPasswordResetEmail(email_lag).addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     Log.d("CHANGEPASS", "BIEN");
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email_lag).addOnCompleteListener(task -> {
                     callback.onSuccess();
                 }else{
                     Log.d("CHANGEPASS", "MAL");
@@ -152,7 +151,7 @@ public class DataRepository {
         return user != null;
     }
 
-    private static boolean isValidEmail(String email) {
+    private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
