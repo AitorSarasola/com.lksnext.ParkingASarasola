@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.lksnext.parkingplantilla.databinding.ActivityLoginBinding;
-import com.lksnext.parkingplantilla.databinding.FragmentProfileBinding;
 import com.lksnext.parkingplantilla.viewmodel.LoginViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 

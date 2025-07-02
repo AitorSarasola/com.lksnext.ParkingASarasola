@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.databinding.FragmentProfileBinding;
 import com.lksnext.parkingplantilla.view.activity.AddCarActivity;
-import com.lksnext.parkingplantilla.view.activity.ChangePasswordActivity;
 import com.lksnext.parkingplantilla.view.activity.LoginActivity;
 import com.lksnext.parkingplantilla.viewmodel.ProfileViewModel;
 

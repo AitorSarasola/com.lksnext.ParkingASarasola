@@ -1,15 +1,15 @@
 package com.lksnext.parkingplantilla.domain;
 
-import android.widget.Switch;
+import com.google.firebase.firestore.MemoryLruGcSettings;
 
 public class Car {
     public enum Type {
-        Coche,
-        Moto
+        COCHE,
+        MOTO
     }
 
     public enum Label {
-        Cero_Emisiones,
+        CERO_EMISIONES,
         ECO,
         B,
         C
@@ -30,12 +30,10 @@ public class Car {
 
     public Car(String matricula, String tipo, String etiqueta, boolean isParaDiscapacitados, boolean isElectrico){
         this.matricula = matricula;
-        switch(tipo){
-            case "Moto": this.tipo = Type.Moto;
-            break;
-            default: this.tipo = Type.Coche;
-                break;
-        }
+        if(tipo=="Moto")
+            this.tipo = Type.MOTO;
+        else
+            this.tipo = Type.COCHE;
 
         switch (etiqueta){
             case "C": this.etiqueta = Label.C;
@@ -44,7 +42,7 @@ public class Car {
             break;
             case "ECO": this.etiqueta = Label.ECO;
             break;
-            default: this.etiqueta = Label.Cero_Emisiones;
+            default: this.etiqueta = Label.CERO_EMISIONES;
         }
         this.isParaDiscapacitados = isParaDiscapacitados;
         this.isElectrico = isElectrico;

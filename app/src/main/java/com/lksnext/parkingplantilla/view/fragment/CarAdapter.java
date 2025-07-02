@@ -39,19 +39,15 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
         holder.txtTypeMatricula.setText(car.getType().toString().toUpperCase()+"\n" + car.getMatricula());
         holder.txtElectrico.setText("Eléctrico: " + (car.isElectrico() ? "Sí" : "No"));
         holder.txtDiscapacitados.setText("Para Discapacitados: " + (car.isParaDiscapacitados() ? "Sí" : "No"));
-        String label = car.getEtiqueta().toString().replace('_',' ');
-        if(label.length()>5)
-            label = "\n"+label;
+        String label = car.getEtiqueta().toString();
+        if(label=="CERO_EMISIONES")
+            label = "\nCero Emisiones";
         holder.txtEtiqueta.setText("Etiqueta Medioambiental: " + label);
 
-        switch (car.getType()) {
-            case Coche:
-                holder.carTypeImage.setImageResource(R.drawable.ic_car);
-                break;
-            case Moto:
-                holder.carTypeImage.setImageResource(R.drawable.ic_motorbike);
-                break;
-        }
+        if (car.getType().equals(Car.Type.COCHE))
+            holder.carTypeImage.setImageResource(R.drawable.ic_car);
+        else
+            holder.carTypeImage.setImageResource(R.drawable.ic_motorbike);
 
         if(car.isElectrico() && car.isParaDiscapacitados()){
             holder.icon1.setImageResource(R.drawable.ic_disabled_vehicle);
@@ -87,7 +83,7 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
     }
 
     static class CarViewHolder extends RecyclerView.ViewHolder {
-        TextView txtTypeMatricula, txtTipo, txtElectrico, txtEtiqueta, txtDiscapacitados;
+        TextView txtTypeMatricula, txtElectrico, txtEtiqueta, txtDiscapacitados;
         ImageView carTypeImage, icon1, icon2;
         Button btnBorrar;
 

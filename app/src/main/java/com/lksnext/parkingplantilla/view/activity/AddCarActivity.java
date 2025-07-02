@@ -43,7 +43,6 @@ public class AddCarActivity extends AppCompatActivity{
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerTipoVehiculo.setAdapter(adapter);
-        Log.d("AddCarActivity", "onCreate: Adapter for vehicle types set");
 
         //Spiner Tipos De Etiquetas Añadir
         ArrayList<String> tiposLabel = new ArrayList<>();
@@ -75,7 +74,6 @@ public class AddCarActivity extends AppCompatActivity{
 
             addCarViewModel.addCar(matricula, tipo, label, isParaDiscapacitados, isElectrico);
         });
-        Log.d("AddCarActivity", "onCreate: Save button listener set");
 
         addCarViewModel.getUltimoCocheGuardado().observe(this, ultimoCocheGuardado -> {
             int color;
@@ -99,6 +97,5 @@ public class AddCarActivity extends AppCompatActivity{
                 binding.errorM.setText("");
             }
         });
-        Log.d("AddCarActivity", "onCreate: Observers for last car saved and error set");
     }
 }
