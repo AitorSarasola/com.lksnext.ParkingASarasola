@@ -1,5 +1,7 @@
 package com.lksnext.parkingplantilla.view.fragment;
 import java.util.ArrayList;
+import java.util.List;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.domain.Car;
 
-public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
-    private ArrayList<Car> carList;
+public class CarItemFragment extends RecyclerView.Adapter<CarItemFragment.CarViewHolder> {
+    private List<Car> carList;
     private OnCarDeleteListener deleteListener;
 
     public interface OnCarDeleteListener {
         void onCarDeleted(Car car);
     }
 
-    public CarAdapter(ArrayList<Car> carList, OnCarDeleteListener listener) {
+    public CarItemFragment(List<Car> carList, OnCarDeleteListener listener) {
         this.carList = carList;
         this.deleteListener = listener;
     }
@@ -63,7 +65,7 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
 
     }
 
-    public void updateList(ArrayList<Car> newList){
+    public void updateList(List<Car> newList){
         carList.clear();
         carList.addAll(newList);
         notifyDataSetChanged();
@@ -97,4 +99,3 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
         }
     }
 }
-

@@ -4,11 +4,16 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
+import com.lksnext.parkingplantilla.domain.CallbackList;
+import com.lksnext.parkingplantilla.domain.Car;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 public class DataRepository {
@@ -160,7 +165,7 @@ public class DataRepository {
     }
 
     private boolean isValidUser(String user) {
-        String userRegex = "^[a-zA-Z0-9_ ]{3,"+USERNAME_MAX_LENGTH+"}$";
+        String userRegex = "^[a-zA-Z0-9_ ]{2,"+(USERNAME_MAX_LENGTH-1)+"}[a-zA-Z0-9_]$";
         Pattern pattern = Pattern.compile(userRegex);
         Matcher matcher = pattern.matcher(user);
         return matcher.matches();
@@ -191,5 +196,54 @@ public class DataRepository {
             return s.substring(0, s.length() - 1);
         }
         return s;
+    }
+    public void cargarCoches(CallbackList<Car> callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        db.collection("users")
+                .document(userId)
+                .collection("Coches")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Car> L = new ArrayList<>();
+
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String matricula = doc.getString("Matricula");
+                        String type = doc.getString("Type");
+                        Boolean isParaDiscapacitados = doc.getBoolean("isParaDiscapacitados");
+                        Boolean isElectrico = doc.getBoolean("isElectrico");
+                        String label = doc.getString("Label");
+
+                        Car car = new Car(matricula, type, label,Boolean.TRUE.equals(isParaDiscapacitados), Boolean.TRUE.equals(isElectrico));
+                        L.add(car);
+                    }
+                    callback.onSuccess(L);
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailure("Error, no se han encontrado coches.");
+                });
+    }
+
+    public void deleteCar(Car carToDelete, Callback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Referencia a la subcolección "Coches" del usuario
+        CollectionReference cochesRef = db.collection("users").document(userId).collection("Coches");
+
+        // Buscar el documento que tenga la misma matrícula
+        cochesRef.whereEqualTo("Matricula", carToDelete.getMatricula())
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        // Eliminar el documento encontrado
+                        doc.getReference().delete()
+                                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                                .addOnFailureListener(e -> callback.onFailure("Error al eliminar el coche."));
+                        break;  // Asumimos que solo hay uno con esa matrícula
+                    }
+                })
+                .addOnFailureListener(e -> callback.onFailure("Error al eliminar el coche."));
     }
 }

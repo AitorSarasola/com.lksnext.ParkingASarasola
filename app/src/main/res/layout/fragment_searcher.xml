@@ -1,38 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/search_layout"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/item_searcher_back"
-    android:padding="10dp">
+    android:layout_height="match_parent"
+    android:padding="40dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="BUSCADOR"
+        android:gravity="right"
+        android:textColor="@color/orange"
+        android:textStyle="bold"
+        android:layout_marginTop="65dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="45dp" />
+
+    <View
+        android:id="@+id/ceroLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/orange"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:id="@+id/txtUsersCars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TUS COCHES GUARDADOS"
+        android:gravity="right"
+        android:textColor="@color/orange"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/ceroLine"
+        android:textSize="20dp" />
 
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:layout_marginBottom="5dp">
+        android:id="@+id/userCars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="22dp"
+        app:layout_constraintTop_toBottomOf="@id/txtUsersCars">
 
-    <ImageButton
-        android:id="@+id/refreshButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="2dp"
-        android:background="@drawable/item_frame_small"
-        android:src="@drawable/ic_update"
-        android:contentDescription="Actualizar Lista"
-        android:scaleType="centerInside"
-        />
+        <ImageButton
+            android:id="@+id/refreshCarsButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="2dp"
+            android:background="@drawable/item_frame_small"
+            android:src="@drawable/ic_update"
+            android:contentDescription="Actualizar Lista"
+            android:scaleType="centerInside"
+            />
 
-    <Spinner
-        android:id="@+id/spinner_coches"
-        android:layout_width="0dp"
-        android:layout_height="37dp"
-        android:layout_weight="1"
-        android:background="@drawable/item_frame_small"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        <Spinner
+            android:id="@+id/spinner_coches"
+            android:layout_width="0dp"
+            android:layout_height="37dp"
+            android:layout_weight="1"
+            android:background="@drawable/item_frame_small"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_aplicar"
@@ -40,107 +76,176 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="16sp"
-        android:text="Aplicar" />
-
-    </LinearLayout>
+        android:text="Aplicar Filtros"
+        app:layout_constraintEnd_toEndOf="@id/userCars"
+        android:layout_marginRight="8dp"
+        app:layout_constraintTop_toBottomOf="@id/userCars"/>
 
         <!-- Línea horizontal naranja -->
     <View
-    android:layout_width="match_parent"
-    android:layout_height="2dp"
-    android:background="@color/orange"
-        android:layout_marginBottom="8dp" />
+        android:id="@+id/firstLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/orange"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/btn_aplicar"
+        android:layout_marginBottom="22dp" />
+
+    <TextView
+        android:id="@+id/txtSearchParameters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PARÁMETROS DE BÚSQUEDA"
+        android:gravity="right"
+        android:textColor="@color/orange"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/firstLine"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/txtPlaza"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Caracteristicas de la plaza"
+        android:gravity="right"
+        android:textColor="@color/grey"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@id/txtSearchParameters"
+        android:textSize="20dp" />
 
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_marginBottom="8dp">
+        android:id="@+id/TypeAndLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/txtPlaza"
+        android:layout_marginBottom="8dp">
 
-    <Spinner
-        android:id="@+id/spinner_tipo_vehiculo"
-        android:layout_width="0dp"
-        android:layout_height="35dp"
-        android:layout_weight="1"
-        android:background="@drawable/item_frame_small"/>
+        <Spinner
+            android:id="@+id/spinner_tipo_vehiculo"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@drawable/item_frame_small"/>
 
-    <Spinner
-        android:id="@+id/spinnerEtiquetaMedioambiental"
-        android:layout_width="0dp"
-        android:layout_height="35dp"
-        android:layout_weight="2"
-        android:background="@drawable/item_frame_small"
-        android:layout_marginStart="8dp"/>
+        <Spinner
+            android:id="@+id/spinnerEtiquetaMedioambiental"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="2"
+            android:background="@drawable/item_frame_small"
+            android:layout_marginStart="8dp"/>
 
     </LinearLayout>
 
-    <EditText
-    android:id="@+id/inDate"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:hint="FECHA: DD-MM-YYYY"
-    android:textColorHint="@color/grey"
-    android:inputType="text"/>
-
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
-
-    <EditText
-        android:id="@+id/inStartTime"
-        android:layout_width="0dp"
+        android:id="@+id/CargElecAndDisc"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="Hora Inicial: HH:MM"
-        android:inputType="text"
-        android:textColorHint="@color/grey"
-        android:layout_marginEnd="25dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/TypeAndLabel"
+        android:layout_marginBottom="8dp">
 
-    <EditText
-        android:id="@+id/inEndTime"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="Hora final: HH:MM"
-        android:textColorHint="@color/grey"
-        android:inputType="text" />
+        <Spinner
+            android:id="@+id/spinnerCargadorElec"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@drawable/item_frame_small" />
+
+        <Spinner
+            android:id="@+id/spinner_discapacidad"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@drawable/item_frame_small"
+            android:layout_marginStart="8dp"/>
 
     </LinearLayout>
 
-        <!-- Spinner etiqueta medioambiental mínima -->
-    <Spinner
-    android:id="@+id/spinnerCargadorElec"
-    android:layout_width="match_parent"
-    android:layout_height="35dp"
-    android:layout_marginBottom="8dp"
-    android:background="@drawable/item_frame_small"
-    android:layout_marginTop="3dp"/>
+    <TextView
+        android:id="@+id/txtMatricula"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Matricula del coche a reservar"
+        android:gravity="right"
+        android:textColor="@color/grey"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/CargElecAndDisc"
+        android:textSize="20dp" />
+
+    <EditText
+        android:id="@+id/Matricula"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Matrícula para la reserva"
+        android:layout_marginEnd="12dp"
+        android:textColorHint="@color/grey"
+        app:layout_constraintTop_toBottomOf="@id/txtMatricula"
+        android:inputType="text"/>
+
+    <TextView
+        android:id="@+id/txtTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fecha y Hora de la reserva"
+        android:gravity="right"
+        android:textColor="@color/grey"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/Matricula"
+        android:textSize="20dp" />
+
+    <EditText
+        android:id="@+id/inDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="FECHA: DD-MM-YYYY"
+        android:textColorHint="@color/grey"
+        app:layout_constraintTop_toBottomOf="@id/txtTime"
+        android:inputType="text"/>
 
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:layout_marginBottom="5dp">
+        android:id="@+id/timeInputs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/inDate"
+        android:gravity="center_vertical">
 
-    <Spinner
-        android:id="@+id/spinner_discapacidad"
-        android:layout_width="0dp"
-        android:layout_height="37dp"
-        android:layout_weight="1"
-        android:background="@drawable/item_frame_small"
-        android:layout_marginEnd="8dp" />
+        <EditText
+            android:id="@+id/inStartTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Hora Inicial: HH:MM"
+            android:inputType="text"
+            android:textColorHint="@color/grey"
+            android:layout_marginEnd="25dp"/>
+
+        <EditText
+            android:id="@+id/inEndTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Hora final: HH:MM"
+            android:textColorHint="@color/grey"
+            android:inputType="text" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnBuscar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="22sp"
-    android:text="BUSCAR" />
+        app:layout_constraintTop_toBottomOf="@id/timeInputs"
+        android:text="BUSCAR" />
 
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
