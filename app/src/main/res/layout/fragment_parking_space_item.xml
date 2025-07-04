@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:padding="12dp"
+    android:padding="22dp"
     android:layout_marginBottom="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,10 +15,10 @@
         >
 
         <TextView
-            android:id="@+id/txtMatricula"
+            android:id="@+id/txtID"
             android:textStyle="bold"
-            android:textSize="18sp"
-            android:text="COCHE\n0000ABC"
+            android:textSize="25sp"
+            android:text="PLAZA Nº 001"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -27,7 +27,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:background="@drawable/item_frame_small"
-            android:contentDescription="Tipo de vehículo"
+            android:contentDescription="Plaza Para Motos"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_car"
             android:padding="2dp"
@@ -53,38 +53,63 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/txtSpaceType"
+        android:textStyle="bold"
+        android:layout_marginTop="-7dp"
+        android:textSize="19sp"
+        android:text="PARA COCHES"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:id="@+id/txtDiscapacitados"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:textSize="18dp"
-        android:text="• Para Discapacitados: No"/>
+        android:textSize="19dp"
+        android:text="• Habilitada Para Discapacitados"/>
 
     <TextView
         android:id="@+id/txtElectrico"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:textSize="18dp"
-        android:text="• Eléctrico: Sí"/>
+        android:textSize="19dp"
+        android:text="• Con Cargador Eléctrico"/>
 
     <TextView
         android:id="@+id/txtEtiqueta"
         android:layout_marginTop="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
+        android:textSize="19dp"
+        android:text="• Etiqueta Medioambiental Máxima:\n  Cero Emisiones"/>
 
-        android:text="• Etiqueta Medioambiental:\n Cero Emisiones"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btnBorrar"
-        android:layout_marginTop="2dp"
-        android:text="Borrar"
-        android:textStyle="bold"
-        android:textColor="@color/orange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/item_frame_red"
-        android:backgroundTint="@android:color/transparent" />
+        <Button
+            android:id="@+id/btnBook"
+            android:layout_marginTop="2dp"
+            android:text="Reservar"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:textColor="@color/orange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/item_frame_red"
+            android:backgroundTint="@android:color/transparent" />
+
+        <TextView
+            android:id="@+id/txtMessage"
+            android:textStyle="bold|italic"
+            android:textSize="22sp"
+            android:text="Plaza Reservada"
+            android:textColor="@color/light_blue"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -1,5 +1,4 @@
 package com.lksnext.parkingplantilla.view.fragment;
-import java.util.ArrayList;
 import java.util.List;
 
 import android.view.LayoutInflater;
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.domain.Car;
 
-public class CarItemFragment extends RecyclerView.Adapter<CarItemFragment.CarViewHolder> {
+public class CarItemAdapter extends RecyclerView.Adapter<CarItemAdapter.CarViewHolder> {
     private List<Car> carList;
     private OnCarDeleteListener deleteListener;
 
@@ -22,7 +21,7 @@ public class CarItemFragment extends RecyclerView.Adapter<CarItemFragment.CarVie
         void onCarDeleted(Car car);
     }
 
-    public CarItemFragment(List<Car> carList, OnCarDeleteListener listener) {
+    public CarItemAdapter(List<Car> carList, OnCarDeleteListener listener) {
         this.carList = carList;
         this.deleteListener = listener;
     }
@@ -39,12 +38,12 @@ public class CarItemFragment extends RecyclerView.Adapter<CarItemFragment.CarVie
         Car car = carList.get(position);
 
         holder.txtTypeMatricula.setText(car.getType().toString().toUpperCase()+"\n" + car.getMatricula());
-        holder.txtElectrico.setText("Eléctrico: " + (car.isElectrico() ? "Sí" : "No"));
-        holder.txtDiscapacitados.setText("Para Discapacitados: " + (car.isParaDiscapacitados() ? "Sí" : "No"));
+        holder.txtElectrico.setText("• Eléctrico: " + (car.isElectrico() ? "Sí" : "No"));
+        holder.txtDiscapacitados.setText("• Apto Para Discapacitados: " + (car.isParaDiscapacitados() ? "Sí" : "No"));
         String label = car.getEtiqueta().toString();
         if(label=="CERO_EMISIONES")
-            label = "\nCero Emisiones";
-        holder.txtEtiqueta.setText("Etiqueta Medioambiental: " + label);
+            label = "\n  Cero Emisiones";
+        holder.txtEtiqueta.setText("• Etiqueta Medioambiental: " + label);
 
         if (car.getType().equals(Car.Type.COCHE))
             holder.carTypeImage.setImageResource(R.drawable.ic_car);

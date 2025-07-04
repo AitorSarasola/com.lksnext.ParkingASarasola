@@ -70,7 +70,7 @@ public class ProfileFragment extends Fragment {
             }
 
             if (listaCoches != null) {
-                CarItemFragment cocheAdapter = new CarItemFragment(listaCoches, car ->
+                CarItemAdapter cocheAdapter = new CarItemAdapter(listaCoches, car ->
                         profileViewModel.deleteCar(car));
                 recyclerView.setAdapter(cocheAdapter);
             }
