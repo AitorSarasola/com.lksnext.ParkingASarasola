@@ -2,17 +2,6 @@ package com.lksnext.parkingplantilla.domain;
 
 public class Plaza {
 
-    public enum Type {
-        COCHE,
-        MOTO
-    }
-
-    public enum Label {
-        CERO_EMISIONES,
-        ECO,
-        B,
-        C
-    }
     private String id;
     private Car.Type tipo;
     private Car.Label etiqueta;

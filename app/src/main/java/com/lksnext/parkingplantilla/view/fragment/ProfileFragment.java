@@ -86,9 +86,9 @@ public class ProfileFragment extends Fragment {
 
         binding.logoutButton.setOnClickListener(v -> {
             if(profileViewModel.isLogout().getValue().equals(Boolean.TRUE)){
-                FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
+                FirebaseAuth.getInstance().signOut();
                 getActivity().finish();
             }else{
                 profileViewModel.logout();

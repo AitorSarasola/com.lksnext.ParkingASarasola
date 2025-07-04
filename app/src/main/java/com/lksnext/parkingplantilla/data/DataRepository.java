@@ -5,15 +5,21 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.lksnext.parkingplantilla.domain.Callback;
+import com.lksnext.parkingplantilla.domain.CallbackBool;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 import com.lksnext.parkingplantilla.domain.CallbackList;
 import com.lksnext.parkingplantilla.domain.Car;
+import com.lksnext.parkingplantilla.domain.Fecha;
+import com.lksnext.parkingplantilla.domain.Hora;
+import com.lksnext.parkingplantilla.domain.Plaza;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 public class DataRepository {
@@ -84,10 +90,8 @@ public class DataRepository {
                     userMap.put("name",userLag);
                     firestore.collection("users").document(id).set(userMap)
                             .addOnSuccessListener(aVoid ->{
-                                Log.d("Firestore", "Datos guardados correctamente");
                                 callback.onSuccess();
                             }).addOnFailureListener(e -> {
-                                Log.e("Firestore","Error: ",e);
                                 callback.onFailure();
                             });
                 } else {
@@ -106,10 +110,8 @@ public class DataRepository {
         }else{
             FirebaseAuth.getInstance().sendPasswordResetEmail(emailLag).addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
-                    Log.d("CHANGEPASS", "BIEN");
                     callback.onSuccess();
                 }else{
-                    Log.d("CHANGEPASS", "MAL");
                     callback.onFailure();
                 }
             });
@@ -177,7 +179,7 @@ public class DataRepository {
         Matcher matcher = pattern.matcher(pass);
         return matcher.matches();
     }
-    private static boolean isValidLicensePlate(String plate) {
+    public static boolean isValidLicensePlate(String plate) {
         String licensePlateRegex = "^\\d{4}[ -]?[A-PR-Z]{3}$";
         Pattern pattern = Pattern.compile(licensePlateRegex);
         Matcher matcher = pattern.matcher(plate);
@@ -246,4 +248,84 @@ public class DataRepository {
                 })
                 .addOnFailureListener(e -> callback.onFailure("Error al eliminar el coche."));
     }
+
+    public static void searchParkingSpacces(String matricula, Car.Type tipo, List<String> etiquetas, int prefElectrico, int prefAccesivilidad, Fecha fecha, Hora iniTime, Hora endTime, CallbackList<Plaza> callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Query query = db.collection("ParkingSpace")
+                .whereEqualTo("Type", tipo.toString())
+                .whereIn("Label", etiquetas);
+
+        if (prefElectrico != 2)
+            query = query.whereEqualTo("isElectrico", prefElectrico == 1);
+
+        if (prefAccesivilidad != 2)
+            query = query.whereEqualTo("isParaDiscapacitados", prefAccesivilidad == 1);
+
+        query.get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Plaza> plazas = new ArrayList<>();
+                    List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+
+                    if (docs.isEmpty()) {
+                        callback.onSuccess(plazas); // No hay plazas
+                        return;
+                    }
+
+                    AtomicInteger pendientes = new AtomicInteger(docs.size());
+
+                    for (DocumentSnapshot doc : docs) {
+                        String id = doc.getId();
+                        String unekLabel = doc.getString("Label").toUpperCase().replace(' ','_');
+                        boolean isElec = doc.getBoolean("isElectrico");
+                        boolean isDis = doc.getBoolean("isParaDiscapacitados");
+                        Plaza plaza = new Plaza(id, tipo, Car.Label.valueOf(unekLabel), isElec, isDis);
+                        isPlazaAvailable(plaza, fecha, iniTime, endTime, disponible -> {
+                            if (disponible) {
+                                plazas.add(plaza);
+                            }
+                            if (pendientes.decrementAndGet() == 0) {
+                                callback.onSuccess(plazas); // Cuando terminen todas
+                            }
+                        });
+                    }
+                    callback.onSuccess(plazas);
+                })
+                .addOnFailureListener(e -> callback.onFailure("Error al buscar plazas."));
+    }
+
+    //NOTA para Rervas que crucen medianoche: Coger el dia anterior y el siguiente y dependiendo de si cruca o no hacer los calculos corespondientes.
+    public static void isPlazaAvailable(Plaza plaza, Fecha fecha, Hora iniTime, Hora endTime, CallbackBool callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Log.d("ISPLAZAAVAIL","FECHA: "+fecha.toStringForFirestore()+" INI: "+iniTime.toString()+" END: "+endTime.toString());
+
+        db.collection("Bookings")
+                .whereEqualTo("isCancelled",false)
+                .whereEqualTo("parkingSpace", plaza.getId())
+                .whereEqualTo("day", fecha.toStringForFirestore())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    boolean disponible = true;
+                    Log.d("ISPLAZAAVAIL","F");
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String iniTimeLag = doc.getString("iniTime");
+                        String endTimeLag = doc.getString("endTime");
+                        Log.d("ISPLAZAAVAIL","INI: "+iniTimeLag+" END: "+endTimeLag);
+                        // Si hay solapamiento, la plaza no está disponible
+                        if (iniTime.toString().compareTo(endTimeLag) < 0 && iniTimeLag.compareTo(endTime.toString()) < 0) {
+                            Log.d("ISPLAZAAVAIL","Plaza no disponible por solapamiento."+(iniTime.toString().compareTo(endTimeLag) < 0)+" - "+(endTime.toString().compareTo(iniTimeLag) > 0));
+                            disponible = false;
+                            break;
+                        }
+                    }
+                    callback.onResult(disponible);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("ISPLAZAAVAIL", "Error al comprobar disponibilidad de la plaza.", e);
+                    callback.onResult(false); // Por seguridad, asumimos no disponible
+                });
+    }
+
+
 }

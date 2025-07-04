@@ -7,6 +7,7 @@ public class Fecha implements Comparable<Fecha> {
 
     // Constructor con formato YYYY-MM-DD
     public Fecha(String fechaStr) {
+        fechaStr = fechaStr.toLowerCase();
         fechaStr = fechaStr.trim();
 
         // Detectar separador: / o - o espacio
@@ -133,11 +134,30 @@ public class Fecha implements Comparable<Fecha> {
 
     @Override
     public String toString() {
-        return String.format("%02d/%02d/%04d", dia, mes, año);
+        String mesName;
+        switch (mes){
+            case 1: mesName = "Enero"; break;
+            case 2: mesName = "Febrero"; break;
+            case 3: mesName = "Marzo"; break;
+            case 4: mesName = "Abril"; break;
+            case 5: mesName = "Mayo"; break;
+            case 6: mesName = "Junio"; break;
+            case 7: mesName = "Julio"; break;
+            case 8: mesName = "Agosto"; break;
+            case 9: mesName = "Septiembre"; break;
+            case 10: mesName = "Octubre"; break;
+            case 11: mesName = "Noviembre"; break;
+            default: mesName = "Diciembre";
+        }
+        return String.format("%02d de %s de %04d", dia, mesName, año);
     }
 
-    public String ToStringForFirestore() {
+    public String toStringForFirestore() {
         return String.format("%04d-%02d-%02d", año, mes, dia);
+    }
+
+    public String toStringForApi() {
+        return String.format("%02d-%02d-%04d", dia, mes, año);
     }
 
     public static String invertirFormatoFecha(String input) {

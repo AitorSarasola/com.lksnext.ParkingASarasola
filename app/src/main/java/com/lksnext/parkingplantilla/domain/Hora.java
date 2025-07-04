@@ -18,7 +18,7 @@ public class Hora implements Comparable<Hora>{
         horaStr = horaStr.trim();
 
         // separa usando regex con delimitadores :, espacio o -
-        String[] partes = horaStr.split("[:\\s-]");
+        String[] partes = horaStr.split("[:\\s-/]");
 
         if (partes.length != 2) {
             throw new IllegalArgumentException("Formato de hora inválido");
@@ -73,7 +73,7 @@ public class Hora implements Comparable<Hora>{
     public int diferenciaEnMinutos(Hora otra) {
         int minutosEsta = this.horas * 60 + this.minutos;
         int minutosOtra = otra.horas * 60 + otra.minutos;
-        return minutosEsta - minutosOtra;
+        return minutosOtra - minutosEsta;
     }
 
     public static Hora horaActual() {
@@ -84,9 +84,5 @@ public class Hora implements Comparable<Hora>{
     @Override
     public String toString() {
         return String.format("%02d:%02d", horas, minutos);
-    }
-
-    public String ToStringForFirestore(){
-        return String.format("%02d-%02d", horas, minutos);
     }
 }

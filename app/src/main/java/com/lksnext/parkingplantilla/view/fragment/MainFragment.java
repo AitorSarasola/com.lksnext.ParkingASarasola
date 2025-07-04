@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.lksnext.parkingplantilla.databinding.FragmentMainBinding;
 import com.lksnext.parkingplantilla.domain.Car;
 import com.lksnext.parkingplantilla.viewmodel.MainViewModel;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +99,12 @@ public class MainFragment extends Fragment {
             binding.spinnerEtiquetaMedioambiental.setSelection(0);
             binding.spinnerTipoVehiculo.setSelection(0);
             binding.Matricula.setText("");
+            mainViewModel.resetSearchOn();
         });
 
         binding.btnAplicar.setOnClickListener(view -> {
             if(binding.spinnerCoches.getSelectedItemPosition() <= 0){
-                binding.message.setText("Error No hay ningún coche seleccionado para poder aplicar sus caracteristicas.");
+                mainViewModel.setError("Error No hay ningún coche seleccionado para poder aplicar sus caracteristicas.");
                 return;
             }
             binding.message.setText("");
@@ -137,13 +139,70 @@ public class MainFragment extends Fragment {
         mainViewModel.getListaCoches().observe(getViewLifecycleOwner(), listaCoches -> {
             inicializarCoches(listaCoches);
         });
+        
+        mainViewModel.getSearchOn().observe(getViewLifecycleOwner(), searchOn -> {
+            if (searchOn == null) { // No hay búsqueda en curso
+                 binding.btnBuscar.setText("Buscar");
+                binding.btnBuscar.setAlpha(1f);
+                binding.btnBuscar.setEnabled(true);
+            } else if(searchOn){ // Hay una búsqueda en curso
+                binding.message.setText("");
+                binding.btnBuscar.setText("Buscando...");
+                binding.btnBuscar.setAlpha(0.5f);
+                binding.btnBuscar.setEnabled(false);
+            }else{ // Búsqueda finalizada
+                binding.btnBuscar.setText("Buscar");
+                binding.btnBuscar.setAlpha(1f);
+                binding.btnBuscar.setEnabled(true);
+                //Lista null -> error
+                if(mainViewModel.getListaPlazas().getValue() == null || mainViewModel.getListaPlazas().getValue().size() <= 0){
+                    binding.message.setText(mainViewModel.getError().getValue());
+                    mainViewModel.resetSearchOn();
+                }else{ //Lista con plazas -> ir a resultados
+                    Log.d("BUSCARPLAZAS","Hay Plazas!!!");
+                    binding.message.setText("BUSQUEDA: "+mainViewModel.getListaPlazas().getValue().get(0).getId());
+                    //Ir a la pantalla de resultados + Pasar la lista de plazas
+                    //       + Mátricula del coche + Fecha y hora + Descripción de la busqueda
+                }
+            }
+        });
+        
+        binding.btnBuscar.setOnClickListener(view -> {
+            if(binding.spinnerTipoVehiculo.getSelectedItemPosition() == 0 || binding.spinnerEtiquetaMedioambiental.getSelectedItemPosition() == 0
+                    || binding.spinnerCargadorElec.getSelectedItemPosition() == 0
+                    || binding.spinnerDiscapacidad.getSelectedItemPosition() == 0){
+                mainViewModel.setError("Error, debes rellenar todos los campos.");
+                return;
+            }
+
+            mainViewModel.buscarPlazas(binding.Matricula.getText().toString(),
+
+                    binding.spinnerTipoVehiculo.getSelectedItemPosition()-1,
+                    binding.spinnerEtiquetaMedioambiental.getSelectedItemPosition()-1,
+                    binding.spinnerCargadorElec.getSelectedItemPosition()-1,
+                    binding.spinnerDiscapacidad.getSelectedItemPosition()-1,
+
+                    binding.inDate.getSelectedItemPosition(),
+                    binding.inStartTime.getText().toString(),
+                    binding.inEndTime.getText().toString()
+            );
+        });
+
+        /*mainViewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if(error != null && !error.isEmpty()){
+                binding.message.setText(error);
+                binding.message.setVisibility(View.VISIBLE);
+            }else{
+                binding.message.setVisibility(View.GONE);
+            }
+        });*/
 
         return root;
     }
 
     private void inicializarFecha() {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                getActivity(), android.R.layout.simple_spinner_item, mainViewModel.getListaDias());
+                getActivity(), android.R.layout.simple_spinner_item, mainViewModel.createNewListaDias());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.inDate.setAdapter(adapter);
     }

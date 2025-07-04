@@ -109,7 +109,7 @@ public class ProfileViewModel extends ViewModel {
     public void logout() {
         logout.setValue(true);
         new Handler(Looper.getMainLooper()).postDelayed(() ->
-            logout.setValue(null), 2000);
+            logout.setValue(false), 2000);
     }
 
 }

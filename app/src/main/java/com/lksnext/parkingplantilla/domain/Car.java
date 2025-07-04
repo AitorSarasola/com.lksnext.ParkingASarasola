@@ -1,5 +1,8 @@
 package com.lksnext.parkingplantilla.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Car {
     public enum Type {
         COCHE,
@@ -64,5 +67,20 @@ public class Car {
 
     public boolean isParaDiscapacitados() {
         return isParaDiscapacitados;
+    }
+
+    public static List<String> getValidLabels(Label label) {
+        List<String> labels = new ArrayList<>();
+        labels.add((Label.C.toString()));
+        if(label == Label.C)
+            return labels;
+        labels.add(Label.B.toString());
+        if(label == Label.B)
+            return labels;
+        labels.add(Label.ECO.toString());
+        if(label == Label.ECO)
+            return labels;
+        labels.add("Cero Emisiones");
+        return labels;
     }
 }

@@ -1,5 +1,8 @@
 package com.lksnext.parkingplantilla.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Reserva {
 
     private String reservaId;
