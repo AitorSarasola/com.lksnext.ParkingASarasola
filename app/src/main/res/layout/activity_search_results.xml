@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".view.activity.AddCarActivity"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="45dp"
+        android:padding="6dp">
+        <ImageView
+            android:id="@+id/electric"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/item_frame"
+            android:contentDescription="Tipo de vehículo"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/ic_electric"
+            android:padding="6dp"/>
+        <ImageView
+            android:id="@+id/diabled"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/item_frame"
+            android:contentDescription="Tipo de vehículo"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/ic_disabled_vehicle"
+            android:padding="6dp"/>
+        <ImageView
+            android:id="@+id/motorbike"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/item_frame"
+            android:contentDescription="Tipo de vehículo"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/ic_motorbike"
+            android:padding="2dp"/>
+        <ImageView
+            android:id="@+id/car"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/item_frame"
+            android:contentDescription="Tipo de vehículo"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/ic_car"
+            android:padding="2dp"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="AÑADIR\nVEHÍCULO"
+        android:gravity="end"
+        android:textStyle="bold"
+        android:textSize="35dp"
+        android:textColor="@color/orange"
+        />
+
+    <!-- Contenedor con fondo -->
+    <LinearLayout
+        android:id="@+id/formContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/item_frame"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tipo de Vehículo:"
+            android:textColor="@color/orange"
+            android:textSize="20dp"
+            android:textStyle="bold"/>
+        <!-- Tipo de vehículo -->
+        <Spinner
+            android:id="@+id/spinnerTipoVehiculo"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:autofillHints="*Tipo De Vehiculo"
+            android:background="@drawable/item_frame_small" />
+
+        <!-- Matrícula -->
+        <EditText
+            android:id="@+id/editTextMatricula"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="10dp"
+            android:hint="*Matrícula (ej.: 1234-ABC)"
+            android:textColorHint="@color/grey"
+            android:inputType="text"
+            android:textSize="22dp" />
+
+        <!-- ¿Es para discapacitados? -->
+        <LinearLayout
+            android:id="@+id/checkboxContainerIsDisabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:gravity="end|center_vertical">
+
+            <TextView
+                android:id="@+id/toggleCheckboxIsDisabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿Es un vehículo para discapacitados?"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:textSize="18sp" />
+
+            <ToggleButton
+                android:id="@+id/checkboxIsDisabled"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_toggle"
+                android:textSize="15dp"
+                android:textOn="✔"
+                android:textOff=""
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                android:checked="false" />
+        </LinearLayout>
+
+        <!-- ¿Es eléctrico? -->
+        <LinearLayout
+            android:id="@+id/checkboxContainerIsElectric"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end|center_vertical"
+            android:layout_marginTop="25dp">
+
+            <TextView
+                android:id="@+id/toggleCheckboxIsElectric"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿Es un vehículo eléctrico?"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <ToggleButton
+                android:id="@+id/checkboxIsElectric"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_toggle"
+                android:textSize="15dp"
+                android:textOn="✔"
+                android:textOff=""
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                android:checked="false" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Etiqueta Medioambiental:"
+            android:textColor="@color/orange"
+            android:textSize="20dp"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"/>
+
+        <!-- Etiqueta medioambiental -->
+        <Spinner
+            android:id="@+id/spinnerLabel"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:autofillHints="*Etiqueta Medioambiental"
+            android:background="@drawable/item_frame_small" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/errorM"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textStyle="italic|bold"
+        android:layout_marginTop="5dp"
+        android:textSize="20dp"
+        android:textColor="@color/red"
+        android:text="Error al guardar el coche. Intentelo de nuevo más tarde."
+        />
+
+    <!-- Botón de guardar -->
+    <Button
+        android:id="@+id/buttonGuardar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Guardar vehículo"
+        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        android:textSize="25dp" />
+
+    <!-- Botón cancelar -->
+    <TextView
+        android:id="@+id/buttonRegresar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="REGRESAR"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/orange"
+        android:textSize="25dp" />
+</LinearLayout>
+
