@@ -1,5 +1,8 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -23,6 +26,10 @@ public class MainViewModel extends ViewModel {
     List<String> unekListaFechas = new ArrayList<>();
 
     private List<Car> allCoches;
+
+    public String getFechaIndex(int i){
+        return unekListaFechas.get(i);
+    }
     public MutableLiveData<Boolean> getSearchOn() {
         return searchOn;
     }
@@ -120,7 +127,7 @@ public class MainViewModel extends ViewModel {
         int timeInMinutes = iniTime.diferenciaEnMinutos(endTime);
         if(timeInMinutes<0){
             //timeInMinutes = 24*60 + timeInMinutes; // IMPLEMENTAR SI SE QUIERE PERMITIR RESERVAS QUE CRUCEN LA MEDIA NOCHE
-            error.setValue("La hora de inicio debe ser anterior a la hora de fin.");
+            error.setValue("La hora inicial debe ser anterior a la hora final.");
             searchOn.setValue(false);
             return;
         }
@@ -144,7 +151,8 @@ public class MainViewModel extends ViewModel {
                 } else {
                     listaPlazas.setValue(lista);
                 }
-                searchOn.setValue(false);
+                new Handler(Looper.getMainLooper()).postDelayed(() ->
+                        searchOn.setValue(false), 1000);
             }
 
             @Override

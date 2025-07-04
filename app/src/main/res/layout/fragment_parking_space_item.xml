@@ -17,15 +17,15 @@
         <TextView
             android:id="@+id/txtID"
             android:textStyle="bold"
-            android:textSize="25sp"
+            android:textSize="22dp"
             android:text="PLAZA Nº 001"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <ImageView
             android:id="@+id/carTypeImage"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:background="@drawable/item_frame_small"
             android:contentDescription="Plaza Para Motos"
             android:scaleType="centerCrop"
@@ -35,19 +35,21 @@
 
         <ImageView
             android:id="@+id/icon1"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="Primera Propiedad"
             android:scaleType="fitEnd"
+            android:layout_marginTop="2dp"
             android:src="@drawable/ic_disabled_vehicle"
             android:layout_marginStart="9dp"/>
 
         <ImageView
             android:id="@+id/icon2"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="SegundaPropiedad"
             android:scaleType="fitEnd"
+            android:layout_marginTop="3dp"
             android:src="@drawable/ic_electric"
             android:layout_marginStart="9dp"/>
     </LinearLayout>
@@ -55,8 +57,8 @@
     <TextView
         android:id="@+id/txtSpaceType"
         android:textStyle="bold"
-        android:layout_marginTop="-7dp"
-        android:textSize="19sp"
+        android:layout_marginTop="-9dp"
+        android:textSize="17dp"
         android:text="PARA COCHES"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -66,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:textSize="19dp"
+        android:textSize="17dp"
         android:text="• Habilitada Para Discapacitados"/>
 
     <TextView
@@ -74,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:textSize="19dp"
+        android:textSize="17dp"
         android:text="• Con Cargador Eléctrico"/>
 
     <TextView
@@ -82,11 +84,12 @@
         android:layout_marginTop="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="19dp"
+        android:textSize="17dp"
         android:text="• Etiqueta Medioambiental Máxima:\n  Cero Emisiones"/>
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
         android:layout_height="wrap_content">
 
         <Button
@@ -94,7 +97,7 @@
             android:layout_marginTop="2dp"
             android:text="Reservar"
             android:textStyle="bold"
-            android:textSize="18dp"
+            android:textSize="15dp"
             android:textColor="@color/orange"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,8 +106,8 @@
 
         <TextView
             android:id="@+id/txtMessage"
-            android:textStyle="bold|italic"
-            android:textSize="22sp"
+            android:textStyle="italic"
+            android:textSize="18dp"
             android:text="Plaza Reservada"
             android:textColor="@color/light_blue"
             android:layout_marginTop="10dp"

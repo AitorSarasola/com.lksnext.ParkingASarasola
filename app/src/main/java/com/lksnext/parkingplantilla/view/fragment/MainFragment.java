@@ -1,6 +1,8 @@
 package com.lksnext.parkingplantilla.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +13,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.lksnext.parkingplantilla.databinding.FragmentMainBinding;
 import com.lksnext.parkingplantilla.domain.Car;
+import com.lksnext.parkingplantilla.domain.Plaza;
+import com.lksnext.parkingplantilla.view.activity.SearchResultsActivity;
 import com.lksnext.parkingplantilla.viewmodel.MainViewModel;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +107,7 @@ public class MainFragment extends Fragment {
 
         binding.btnAplicar.setOnClickListener(view -> {
             if(binding.spinnerCoches.getSelectedItemPosition() <= 0){
-                mainViewModel.setError("Error No hay ningún coche seleccionado para poder aplicar sus caracteristicas.");
+                binding.message.setText("Error No hay ningún coche seleccionado para poder aplicar sus caracteristicas.");
                 return;
             }
             binding.message.setText("");
@@ -159,10 +162,34 @@ public class MainFragment extends Fragment {
                     binding.message.setText(mainViewModel.getError().getValue());
                     mainViewModel.resetSearchOn();
                 }else{ //Lista con plazas -> ir a resultados
-                    Log.d("BUSCARPLAZAS","Hay Plazas!!!");
-                    binding.message.setText("BUSQUEDA: "+mainViewModel.getListaPlazas().getValue().get(0).getId());
-                    //Ir a la pantalla de resultados + Pasar la lista de plazas
-                    //       + Mátricula del coche + Fecha y hora + Descripción de la busqueda
+                    binding.message.setText("");
+                    Intent intent = new Intent(getActivity(), SearchResultsActivity.class);
+
+                    intent.putExtra("listaPlazas", (ArrayList<Plaza>) mainViewModel.getListaPlazas().getValue());
+                    mainViewModel.resetSearchOn();
+
+                    intent.putExtra("matricula", binding.Matricula.getText().toString());
+                    if(binding.spinnerTipoVehiculo.getSelectedItemPosition() == 1)
+                        intent.putExtra("tipoVehiculo", Car.Type.COCHE);
+                    else
+                        intent.putExtra("tipoVehiculo", Car.Type.MOTO);
+
+                    switch (binding.spinnerEtiquetaMedioambiental.getSelectedItemPosition()){
+                        case 1: intent.putExtra("etiqueta",Car.Label.CERO_EMISIONES);break;
+                        case 2: intent.putExtra("etiqueta",Car.Label.ECO);break;
+                        case 3: intent.putExtra("etiqueta",Car.Label.B);break;
+                        default: intent.putExtra("etiqueta",Car.Label.C);
+                    }
+
+                    intent.putExtra("prefElec",binding.spinnerCargadorElec.getSelectedItemPosition()-1);
+                    intent.putExtra("prefAccesibilidad", binding.spinnerDiscapacidad.getSelectedItemPosition()-1);
+                    intent.putExtra("fecha",mainViewModel.getFechaIndex(binding.inDate.getSelectedItemPosition()));
+                    intent.putExtra("inicioH", binding.inStartTime.getText().toString());
+                    intent.putExtra("finH", binding.inEndTime.getText().toString());
+
+                    Log.d("GOTORESULTS", "1111");
+                    startActivity(intent);
+                    Log.d("GOTORESULTS", "2222");
                 }
             }
         });
@@ -171,7 +198,7 @@ public class MainFragment extends Fragment {
             if(binding.spinnerTipoVehiculo.getSelectedItemPosition() == 0 || binding.spinnerEtiquetaMedioambiental.getSelectedItemPosition() == 0
                     || binding.spinnerCargadorElec.getSelectedItemPosition() == 0
                     || binding.spinnerDiscapacidad.getSelectedItemPosition() == 0){
-                mainViewModel.setError("Error, debes rellenar todos los campos.");
+                binding.message.setText("Error, debes rellenar todos los campos.");
                 return;
             }
 
@@ -187,15 +214,6 @@ public class MainFragment extends Fragment {
                     binding.inEndTime.getText().toString()
             );
         });
-
-        /*mainViewModel.getError().observe(getViewLifecycleOwner(), error -> {
-            if(error != null && !error.isEmpty()){
-                binding.message.setText(error);
-                binding.message.setVisibility(View.VISIBLE);
-            }else{
-                binding.message.setVisibility(View.GONE);
-            }
-        });*/
 
         return root;
     }

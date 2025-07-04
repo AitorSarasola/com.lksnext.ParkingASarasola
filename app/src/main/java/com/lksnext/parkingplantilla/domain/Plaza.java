@@ -1,6 +1,8 @@
 package com.lksnext.parkingplantilla.domain;
 
-public class Plaza {
+import java.io.Serializable;
+
+public class Plaza implements Serializable {
 
     private String id;
     private Car.Type tipo;
