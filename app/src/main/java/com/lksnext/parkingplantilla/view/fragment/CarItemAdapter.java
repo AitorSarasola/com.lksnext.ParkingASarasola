@@ -1,5 +1,6 @@
 package com.lksnext.parkingplantilla.view.fragment;
-import java.util.ArrayList;
+import java.util.List;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.domain.Car;
 
-public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
-    private ArrayList<Car> carList;
+public class CarItemAdapter extends RecyclerView.Adapter<CarItemAdapter.CarViewHolder> {
+    private List<Car> carList;
     private OnCarDeleteListener deleteListener;
 
     public interface OnCarDeleteListener {
         void onCarDeleted(Car car);
     }
 
-    public CarAdapter(ArrayList<Car> carList, OnCarDeleteListener listener) {
+    public CarItemAdapter(List<Car> carList, OnCarDeleteListener listener) {
         this.carList = carList;
         this.deleteListener = listener;
     }
@@ -37,35 +38,23 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
         Car car = carList.get(position);
 
         holder.txtTypeMatricula.setText(car.getType().toString().toUpperCase()+"\n" + car.getMatricula());
-        holder.txtElectrico.setText("Eléctrico: " + (car.isElectrico() ? "Sí" : "No"));
-        holder.txtDiscapacitados.setText("Para Discapacitados: " + (car.isParaDiscapacitados() ? "Sí" : "No"));
-        String label = car.getEtiqueta().toString().replace('_',' ');
-        if(label.length()>5)
-            label = "\n"+label;
-        holder.txtEtiqueta.setText("Etiqueta Medioambiental: " + label);
+        holder.txtElectrico.setText("• Eléctrico: " + (car.isElectrico() ? "Sí" : "No"));
+        holder.txtDiscapacitados.setText("• Apto Para Discapacitados: " + (car.isParaDiscapacitados() ? "Sí" : "No"));
+        String label = car.getEtiqueta().toString();
+        if(label=="CERO_EMISIONES")
+            label = "\n  Cero Emisiones";
+        holder.txtEtiqueta.setText("• Etiqueta Medioambiental: " + label);
 
-        switch (car.getType()) {
-            case Coche:
-                holder.carTypeImage.setImageResource(R.drawable.ic_car);
-                break;
-            case Moto:
-                holder.carTypeImage.setImageResource(R.drawable.ic_motorbike);
-                break;
-        }
+        if (car.getType().equals(Car.Type.COCHE))
+            holder.carTypeImage.setImageResource(R.drawable.ic_car);
+        else
+            holder.carTypeImage.setImageResource(R.drawable.ic_motorbike);
 
-        if(car.isElectrico() && car.isParaDiscapacitados()){
-            holder.icon1.setImageResource(R.drawable.ic_disabled_vehicle);
-            holder.icon2.setImageResource(R.drawable.ic_electric);
-        }else if(car.isElectrico()){
-            holder.icon1.setImageResource(R.drawable.ic_electric);
-            holder.icon2.setImageResource(0);
-        }else if(car.isParaDiscapacitados()){
-            holder.icon1.setImageResource(R.drawable.ic_disabled_vehicle);
-            holder.icon2.setImageResource(0);
-        }else{
-            holder.icon1.setImageResource(0);
-            holder.icon2.setImageResource(0);
-        }
+        if(car.isParaDiscapacitados())
+            holder.icon1.setVisibility(View.GONE);
+
+        if(car.isElectrico())
+            holder.icon2.setVisibility(View.GONE);
 
         holder.btnBorrar.setOnClickListener(v -> {
             if(deleteListener != null){
@@ -75,7 +64,7 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
 
     }
 
-    public void updateList(ArrayList<Car> newList){
+    public void updateList(List<Car> newList){
         carList.clear();
         carList.addAll(newList);
         notifyDataSetChanged();
@@ -87,8 +76,13 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
     }
 
     static class CarViewHolder extends RecyclerView.ViewHolder {
-        TextView txtTypeMatricula, txtTipo, txtElectrico, txtEtiqueta, txtDiscapacitados;
-        ImageView carTypeImage, icon1, icon2;
+        TextView txtTypeMatricula;
+        TextView txtElectrico;
+        TextView txtEtiqueta;
+        TextView txtDiscapacitados;
+        ImageView carTypeImage;
+        ImageView icon1;
+        ImageView icon2;
         Button btnBorrar;
 
         public CarViewHolder(@NonNull View itemView) {
@@ -104,4 +98,3 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.CarViewHolder> {
         }
     }
 }
-

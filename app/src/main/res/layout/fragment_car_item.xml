@@ -18,7 +18,7 @@
             android:id="@+id/txtMatricula"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:text="MOTO\n0000ABC"
+            android:text="COCHE\n0000ABC"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:textSize="18dp"
-        android:text="Para Discapacitados: No"/>
+        android:text="• Para Discapacitados: No"/>
 
     <TextView
         android:id="@+id/txtElectrico"
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:textSize="18dp"
-        android:text="Eléctrico: Sí"/>
+        android:text="• Eléctrico: Sí"/>
 
     <TextView
         android:id="@+id/txtEtiqueta"
@@ -74,7 +74,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18dp"
-        android:text="Etiqueta Medioambiental:\nCero Emisiones"/>
+
+        android:text="• Etiqueta Medioambiental:\n Cero Emisiones"/>
 
     <Button
         android:id="@+id/btnBorrar"

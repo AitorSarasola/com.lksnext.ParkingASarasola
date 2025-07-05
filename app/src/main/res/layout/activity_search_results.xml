@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    tools:context=".view.activity.AddCarActivity"
+    android:padding="35dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="7dp">
+
+        <ImageButton
+            android:id="@+id/btnReturn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/item_frame_grey"
+            android:contentDescription="Actualizar Fechas y Horas"
+            android:padding="6dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_return" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="RESULTADOS"
+            android:gravity="end"
+            android:textStyle="bold"
+            android:textSize="35dp"
+            android:textColor="@color/orange"
+            />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/firstLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/orange"
+        />
+
+    <ImageButton
+        android:id="@+id/refreshButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/item_frame_small"
+        android:contentDescription="Actualizar Lista"
+        android:padding="2dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_update" />
+
+    <TextView
+        android:id="@+id/txtDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Plaza para Coches - Etiqueta Máxima:\nCero Emisiones\nApto para Discapacitados\nCon Cargador Eléctrico\n\nDD de enero de YYYY:    HH:mm - HH:mm"
+        android:gravity="right|bottom"
+        android:layout_marginTop="-45dp"
+        android:textStyle="bold"
+        android:textSize="15.5dp"
+        />
+
+    <View
+        android:id="@+id/secondLine"
+        android:layout_marginTop="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/orange"
+        />
+
+    <LinearLayout
+        android:id="@+id/spinner_C_coches"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="5dp">
+
+        <ImageView
+            android:id="@+id/imageVehicle"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/item_frame_small"
+            android:contentDescription="Tipo de vehículo"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_car"
+            android:padding="2dp"/>
+
+        <EditText
+            android:id="@+id/inMatricula"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Matrícula para la reserva"
+            android:textColorHint="@color/grey"
+            android:layout_marginLeft="8dp"
+            android:inputType="text"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/thirdLine"
+        android:layout_marginTop="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/orange"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPlazas"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginTop="10dp"
+        tools:listitem="@layout/fragment_parking_space_item"
+        android:contentDescription="Lista De Plazas"/>
+
+    <TextView
+        android:id="@+id/listaVaciaM"
+        android:layout_width="match_parent"
+        android:layout_marginTop="-400dp"
+        android:layout_height="400dp"
+        android:text="Car-gando..."
+        android:textStyle="bold|italic"
+        android:textColor="@color/orange"
+        android:textSize="25dp"
+        android:gravity="center_vertical|center_horizontal"
+        />
+
+    <View
+        android:id="@+id/fourthLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/orange"
+        />
+
+    <TextView
+        android:id="@+id/Mensaje"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="Mensaje de Error"
+        android:gravity="end"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/red"
+        />
+
+</LinearLayout>
+

@@ -1,15 +1,16 @@
 package com.lksnext.parkingplantilla.domain;
 
-import android.widget.Switch;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Car {
     public enum Type {
-        Coche,
-        Moto
+        COCHE,
+        MOTO
     }
 
     public enum Label {
-        Cero_Emisiones,
+        CERO_EMISIONES,
         ECO,
         B,
         C
@@ -30,12 +31,10 @@ public class Car {
 
     public Car(String matricula, String tipo, String etiqueta, boolean isParaDiscapacitados, boolean isElectrico){
         this.matricula = matricula;
-        switch(tipo){
-            case "Moto": this.tipo = Type.Moto;
-            break;
-            default: this.tipo = Type.Coche;
-                break;
-        }
+        if(tipo.equalsIgnoreCase("MOTO"))
+            this.tipo = Type.MOTO;
+        else
+            this.tipo = Type.COCHE;
 
         switch (etiqueta){
             case "C": this.etiqueta = Label.C;
@@ -44,7 +43,7 @@ public class Car {
             break;
             case "ECO": this.etiqueta = Label.ECO;
             break;
-            default: this.etiqueta = Label.Cero_Emisiones;
+            default: this.etiqueta = Label.CERO_EMISIONES;
         }
         this.isParaDiscapacitados = isParaDiscapacitados;
         this.isElectrico = isElectrico;
@@ -68,5 +67,20 @@ public class Car {
 
     public boolean isParaDiscapacitados() {
         return isParaDiscapacitados;
+    }
+
+    public static List<String> getValidLabels(Label label) {
+        List<String> labels = new ArrayList<>();
+        labels.add((Label.C.toString()));
+        if(label == Label.C)
+            return labels;
+        labels.add(Label.B.toString());
+        if(label == Label.B)
+            return labels;
+        labels.add(Label.ECO.toString());
+        if(label == Label.ECO)
+            return labels;
+        labels.add("Cero Emisiones");
+        return labels;
     }
 }

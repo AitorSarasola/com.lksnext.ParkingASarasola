@@ -26,14 +26,12 @@ public class RegisterViewModel extends ViewModel {
             //En caso de que el login sea correcto, que se hace
             @Override
             public void onSuccess() {
-                //TODO
                 signedUp.setValue(Boolean.TRUE);
             }
 
             //En caso de que el login sea incorrecto, que se hace
             @Override
             public void onFailure(String errorM) {
-                //TODO
                 error.setValue(errorM);
                 signedUp.setValue(Boolean.FALSE);
             }

@@ -2,7 +2,6 @@ package com.lksnext.parkingplantilla.viewmodel;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -11,22 +10,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lksnext.parkingplantilla.data.DataRepository;
 import com.lksnext.parkingplantilla.domain.Callback;
+import com.lksnext.parkingplantilla.domain.CallbackList;
 import com.lksnext.parkingplantilla.domain.Car;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.CollectionReference;
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileViewModel extends ViewModel {
-    MutableLiveData<ArrayList<Car>> listaCoches = new MutableLiveData<ArrayList<Car>>();
+    MutableLiveData<List<Car>> listaCoches = new MutableLiveData<>();
     MutableLiveData<Boolean> logout = new MutableLiveData<>(false);
     MutableLiveData<Boolean> sent = new MutableLiveData<>(null);
 
     MutableLiveData<String> error = new MutableLiveData<>(null);
 
-    public MutableLiveData<ArrayList<Car>> getListaCoches(){
+    public MutableLiveData<List<Car>> getListaCoches(){
         return listaCoches;
     }
     public MutableLiveData<Boolean> isLogout() {
@@ -40,65 +37,37 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void cargarCoches() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d("FirebaseCoches","Start");
+        DataRepository.getInstance().cargarCoches(new CallbackList<Car>() {
+            @Override
+            public void onSuccess(List<Car> lista) {
+                listaCoches.setValue(lista);
+            }
 
-        db.collection("users")
-                .document(userId)
-                .collection("Coches")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<Car> L = new ArrayList<>();
-                    Log.d("FirebaseCoches","OnSuccessListener");
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        String matricula = doc.getString("Matricula");
-                        Log.d("FirebaseCoches","Matricula: "+matricula);
-                        String type = doc.getString("Type");
-                        Boolean isParaDiscapacitados = doc.getBoolean("isParaDiscapacitados");
-                        Boolean isElectrico = doc.getBoolean("isElectrico");
-                        String label = doc.getString("Label");
-
-                        Car car = new Car(matricula, type, label,isParaDiscapacitados != null ? isParaDiscapacitados : false ,isElectrico != null ? isElectrico : false);
-                        L.add(car);
-                    }
-                    listaCoches.setValue(L);
-                    Log.d("FirestoreCoches", "Coches cargados correctamente");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("FirestoreCoches", "Error al cargar coches: " + e.getMessage());
-                    listaCoches.setValue(new ArrayList<>());
-                });
+            @Override
+            public void onFailure(String errorM) {
+                listaCoches.setValue(new ArrayList<>());
+            }
+        });
     }
 
 
     public void deleteCar(Car carToDelete) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DataRepository.getInstance().deleteCar(carToDelete, new Callback() {
+            @Override
+            public void onSuccess() {
+                cargarCoches();
+            }
 
-        // Referencia a la subcolección "Coches" del usuario
-        CollectionReference cochesRef = db.collection("users").document(userId).collection("Coches");
+            @Override
+            public void onFailure(String errorM) {
+                error.setValue(errorM);
+            }
 
-        // Buscar el documento que tenga la misma matrícula
-        cochesRef.whereEqualTo("Matricula", carToDelete.getMatricula())
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    for (DocumentSnapshot doc : querySnapshot) {
-                        // Eliminar el documento encontrado
-                        doc.getReference().delete()
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d("Firestore", "Coche eliminado correctamente");
-                                    cargarCoches();  // Recargar la lista
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("Firestore", "Error eliminando coche: " + e.getMessage());
-                                });
-                        break;  // Asumimos que solo hay uno con esa matrícula
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error buscando coche: " + e.getMessage());
-                });
+            @Override
+            public void onFailure() {
+                error.setValue("Error al eliminar el coche, intenta de nuevo.");
+            }
+        });
     }
 
     public void changeCurrentUserPass() {
@@ -133,14 +102,8 @@ public class ProfileViewModel extends ViewModel {
 
     public void logout() {
         logout.setValue(true);
-        Log.d("LOGOUT_PROFILE", "Logout initiated");
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                logout.setValue(false);
-                Log.d("LOGOUT_PROFILE", "Logout ended");
-            }
-        }, 1000);
+        new Handler(Looper.getMainLooper()).postDelayed(() ->
+            logout.setValue(false), 2000);
     }
 
 }

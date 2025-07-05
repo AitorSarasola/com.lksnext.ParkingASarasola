@@ -2,71 +2,74 @@ package com.lksnext.parkingplantilla.domain;
 
 public class Reserva {
 
-    String fecha;
-    String usuario;
-    String id;
+    private String reservaId;
+    private String user;
+    private String car;
+    private String plaza;
+    private boolean isCancelled;
+    private Fecha day;
+    private Hora iniTime;
+    private Hora endTime;
 
-    Plaza plaza;
-
-    Hora hora;
-
-    public Reserva() {
-
-    }
-
-    public Reserva(String fecha, String usuario, String id, Plaza plaza, Hora hora) {
-        this.fecha = fecha;
-        this.usuario = usuario;
+    public Reserva(String reservaId, String user, String car, String plaza, boolean isCancelled, Fecha day, Hora iniTime, Hora endTime) {
+        this.reservaId = reservaId;
+        this.user = user;
+        this.car = car;
         this.plaza = plaza;
-        this.hora = hora;
-        this.id = id;
+        this.isCancelled = isCancelled;
+        this.day = day;
+        this.iniTime = iniTime;
+        this.endTime = endTime;
     }
 
-    public String getFecha() {
-        return fecha;
+    public String getReservaId() {
+        return reservaId;
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
+    public String getUser() {
+        return user;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public String getCar() {
+        return car;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
-    public Plaza getPlazaId() {
+    public String getPlaza() {
         return plaza;
     }
 
-    public void setPlazaId(Plaza plaza) {
+    public boolean isCancelled() {
+        return isCancelled;
+    }
+
+    public void setCancelled(boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public Fecha getDay() {
+        return day;
+    }
+
+    public Hora getIniTime() {
+        return iniTime;
+    }
+
+    public Hora getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Hora endTime) {
+        this.endTime = endTime;
+    }
+
+    public Reserva(String reservaId, String user, String car, String plaza, boolean isCancelled, String day, String iniTime, String endTime) {
+        this.reservaId = reservaId;
+        this.user = user;
+        this.car = car;
         this.plaza = plaza;
-    }
-
-    public Hora getHoraInicio() {
-        return hora;
-    }
-
-    public void setHoraInicio(Hora hora) {
-        this.hora = hora;
-    }
-
-    public Hora getHoraFin() {
-        return hora;
-    }
-
-    public void setHoraFin(Hora hora) {
-        this.hora = hora;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.isCancelled = isCancelled;
+        this.day = new Fecha(Fecha.invertirFormatoFecha(day));
+        this.iniTime = new Hora(iniTime);
+        this.endTime = new Hora(endTime);
     }
 }

@@ -2,7 +2,6 @@ package com.lksnext.parkingplantilla.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,7 +42,6 @@ public class AddCarActivity extends AppCompatActivity{
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerTipoVehiculo.setAdapter(adapter);
-        Log.d("AddCarActivity", "onCreate: Adapter for vehicle types set");
 
         //Spiner Tipos De Etiquetas Añadir
         ArrayList<String> tiposLabel = new ArrayList<>();
@@ -68,14 +66,13 @@ public class AddCarActivity extends AppCompatActivity{
 
         binding.buttonGuardar.setOnClickListener(v->{
             String matricula = binding.editTextMatricula.getText().toString();
-            String tipo = binding.spinnerTipoVehiculo.getSelectedItem().toString();
-            String label = binding.spinnerLabel.getSelectedItem().toString();
+            String tipo = binding.spinnerTipoVehiculo.getSelectedItem().toString().toUpperCase();
+            String label = binding.spinnerLabel.getSelectedItem().toString().toUpperCase();
             boolean isParaDiscapacitados = binding.checkboxIsDisabled.isChecked();
             boolean isElectrico = binding.checkboxIsElectric.isChecked();
 
             addCarViewModel.addCar(matricula, tipo, label, isParaDiscapacitados, isElectrico);
         });
-        Log.d("AddCarActivity", "onCreate: Save button listener set");
 
         addCarViewModel.getUltimoCocheGuardado().observe(this, ultimoCocheGuardado -> {
             int color;
@@ -99,6 +96,5 @@ public class AddCarActivity extends AppCompatActivity{
                 binding.errorM.setText("");
             }
         });
-        Log.d("AddCarActivity", "onCreate: Observers for last car saved and error set");
     }
 }
