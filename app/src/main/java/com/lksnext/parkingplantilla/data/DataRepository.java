@@ -319,5 +319,45 @@ public class DataRepository {
                 });
     }
 
+    public static void bookParkingSpace(Plaza plaza,String matricula, Fecha fecha, Hora iniH, Hora finH, Callback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        isPlazaAvailable(plaza, fecha, iniH, finH, disponible -> {
+            if (!disponible) {
+                callback.onFailure("La plaza no está disponible en el horario seleccionado.");
+            }else{
+                // Crear un nuevo documento de reserva
+                HashMap<String, Object> booking = new HashMap<>();
+                booking.put("parkingSpace", plaza.getId());
+                booking.put("car", matricula);
+                booking.put("day", fecha.toStringForFirestore());
+                booking.put("iniTime", iniH.toString());
+                booking.put("endTime", finH.toString());
+                booking.put("userId", userId);
+                booking.put("isCancelled", false);
+
+                db.collection("Bookings").add(booking)
+                        .addOnSuccessListener(documentReference -> callback.onSuccess())
+                        .addOnFailureListener(e -> callback.onFailure("Error al reservar la plaza."));
+            }
+        });
+    }
+
+    public static String validHours(Hora iniH, Hora finH) {
+        int timeInMinutes = iniH.diferenciaEnMinutos(finH);
+        if(timeInMinutes<0)
+            //timeInMinutes = 24*60 + timeInMinutes; // IMPLEMENTAR SI SE QUIERE PERMITIR RESERVAS QUE CRUCEN LA MEDIA NOCHE
+            return("La hora de inicio debe ser anterior a la hora de fin.");
+
+        if(timeInMinutes < 5)
+            return("La reserva debe durar al menos 5 minutos.");
+
+        if(timeInMinutes > 60*9)
+            return("La reserva no puede superar las 9 horas.");
+
+        return null;
+    }
+
 
 }

@@ -3,12 +3,16 @@ package com.lksnext.parkingplantilla.view.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.databinding.ActivitySearchResultsBinding;
+import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.Car;
 import com.lksnext.parkingplantilla.domain.Fecha;
 import com.lksnext.parkingplantilla.domain.Hora;
@@ -58,13 +62,16 @@ public class SearchResultsActivity extends AppCompatActivity {
         int prefAccesibilidad = getIntent().getIntExtra("prefAccesibilidad",2);
 
         Fecha fecha = new Fecha((String) getIntent().getStringExtra("fecha"));
+        searchResultsViewModel.setFecha(fecha);
         String iniHora = getIntent().getStringExtra("inicioH");
         Hora inicioH = new Hora(iniHora);
+        searchResultsViewModel.setIniH(inicioH);
         String finHora = getIntent().getStringExtra("finH");
         Hora finH = new Hora(finHora);
+        searchResultsViewModel.setFinH(finH);
 
         //Inicializamos la descripción de la búsqueda
-        inicializarDescripcion(tipoVehiculo, etiqueta, prefElec, prefAccesibilidad, fecha, inicioH, finH);
+        inicializarDescripcion(tipoVehiculo, etiqueta, prefElec, prefAccesibilidad);
 
         List<Plaza> plazas;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -81,8 +88,31 @@ public class SearchResultsActivity extends AppCompatActivity {
                 binding.listaVaciaM.setText("No Hay Plazas Disponibles Con Estos Parámetros.");
             else {
                 binding.listaVaciaM.setText("");
-                ParkingSpaceAdapter plazaAdapter = new ParkingSpaceAdapter(plazasList, plaza ->
-                    searchResultsViewModel.book(plaza, fecha, inicioH, finH, matricula));
+                ParkingSpaceAdapter plazaAdapter = new ParkingSpaceAdapter(plazasList, (plaza, itemView) ->
+                    searchResultsViewModel.book(plaza, matricula, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            Button btn = itemView.findViewById(R.id.btnBook);
+                            TextView txtMensaje = itemView.findViewById(R.id.txtMessage);
+
+                            btn.setVisibility(View.GONE);
+                            txtMensaje.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            Button btn = itemView.findViewById(R.id.btnBook);
+                            btn.setEnabled(false);
+                            btn.setAlpha(0.5f);
+                        }
+
+                        @Override
+                        public void onFailure(String errorM) {
+                            Button btn = itemView.findViewById(R.id.btnBook);
+                            btn.setEnabled(false);
+                            btn.setAlpha(0.5f);
+                        }
+                    }));
                 binding.recyclerViewPlazas.setAdapter(plazaAdapter);
             }
         });
@@ -95,10 +125,27 @@ public class SearchResultsActivity extends AppCompatActivity {
             }
         });
 
+        // Observamos los cambios en fecha, inicioH y finH para actualizar la descripción
+        searchResultsViewModel.getFecha().observe(this, fechaValue -> {
+            if (fechaValue != null) {
+                inicializarDescripcion(tipoVehiculo, etiqueta, prefElec, prefAccesibilidad);
+            }
+        });
+        searchResultsViewModel.getIniH().observe(this, inicioHValue -> {
+            if (inicioHValue != null) {
+                inicializarDescripcion(tipoVehiculo, etiqueta, prefElec, prefAccesibilidad);
+            }
+        });
+        searchResultsViewModel.getFinH().observe(this, finHValue -> {
+            if (finHValue != null) {
+                inicializarDescripcion(tipoVehiculo, etiqueta, prefElec, prefAccesibilidad);
+            }
+        });
+
         binding.refreshButton.setOnClickListener(v->{
             searchResultsViewModel.setListaPlazas(null);
             searchResultsViewModel.buscarPlazas(binding.inMatricula.getText().toString(), tipoVehiculo, etiqueta,
-                    prefElec, prefAccesibilidad, fecha, inicioH, finH);
+                    prefElec, prefAccesibilidad);
         });
 
         binding.btnReturn.setOnClickListener(v->{
@@ -108,7 +155,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
     }
 
-    public void inicializarDescripcion(Car.Type tipoVehiculo, Car.Label etiqueta, int prefElec, int prefAccesibilidad, Fecha fecha, Hora inicioH, Hora finH) {
+    public void inicializarDescripcion(Car.Type tipoVehiculo, Car.Label etiqueta, int prefElec, int prefAccesibilidad) {
         String descripcion = "Plaza para " + tipoVehiculo.toString().toLowerCase() + " - ";
         if (etiqueta == Car.Label.CERO_EMISIONES)
             descripcion += "Etiqueta Máxima\nCero Emisiones\n";
@@ -130,6 +177,10 @@ public class SearchResultsActivity extends AppCompatActivity {
         } else {
             descripcion += "Sin Preferencia De Accesibilidad.\n\n";
         }
+
+        Fecha fecha = searchResultsViewModel.getFecha().getValue();
+        Hora inicioH = searchResultsViewModel.getIniH().getValue();
+        Hora finH = searchResultsViewModel.getFinH().getValue();
 
         descripcion += fecha.toString() + ":   " + inicioH.toString() + " - " + finH.toString();
         binding.txtDescription.setText(descripcion);
