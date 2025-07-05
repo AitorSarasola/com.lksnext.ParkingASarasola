@@ -2,6 +2,7 @@ package com.lksnext.parkingplantilla.viewmodel;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -31,6 +32,7 @@ public class MainViewModel extends ViewModel {
     public String getFechaIndex(int i){
         return unekListaFechas.get(i);
     }
+
     public MutableLiveData<Boolean> getSearchOn() {
         return searchOn;
     }
@@ -62,7 +64,7 @@ public class MainViewModel extends ViewModel {
         String[] listaHoras = new String[2];
         listaHoras[0] = Hora.horaActual().toString();
         Hora lag = Hora.horaActual();
-        lag.sumarMinutos(60*3);
+        lag.sumarMinutos(60*1);
         listaHoras[1] = lag.toString();
         return listaHoras;
     }
@@ -79,7 +81,7 @@ public class MainViewModel extends ViewModel {
                 listaCoches.setValue(carNames);
                 if(carNames.isEmpty()) {
                     List<String> listaVacia = new ArrayList<>();
-                    listaVacia.add("*No hay coches registrados");
+                    listaVacia.add("*No hay coches guardados");
                     listaCoches.setValue(listaVacia);
                     allCoches = null;
                 }else{
@@ -144,7 +146,7 @@ public class MainViewModel extends ViewModel {
             if(cambioFecha) {
                 calllback.onFailure();
                 if(lag.equals("La hora de inicio debe ser anterior a la hora de fin."))
-                    error.setValue("La reserva debe ser anterior a la fecha actual.");
+                    error.setValue("La reserva debe ser anterior a la fecha y hora actual.");
             }else
                 error.setValue(lag);
             searchOn.setValue(false);
@@ -159,8 +161,7 @@ public class MainViewModel extends ViewModel {
                 } else {
                     listaPlazas.setValue(lista);
                 }
-                new Handler(Looper.getMainLooper()).postDelayed(() ->
-                        searchOn.setValue(false), 1000);
+                searchOn.setValue(false);
             }
 
             @Override
@@ -173,7 +174,6 @@ public class MainViewModel extends ViewModel {
 
     public void resetSearchOn() {
         searchOn.setValue(null);
-        listaPlazas.setValue(new ArrayList<>());
     }
 
     public Car getCoche(int i) {

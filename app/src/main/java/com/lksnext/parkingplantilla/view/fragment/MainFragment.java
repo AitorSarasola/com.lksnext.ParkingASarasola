@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.lksnext.parkingplantilla.databinding.FragmentMainBinding;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.Car;
+import com.lksnext.parkingplantilla.domain.Fecha;
 import com.lksnext.parkingplantilla.domain.Plaza;
 import com.lksnext.parkingplantilla.domain.Hora;
 import com.lksnext.parkingplantilla.view.activity.SearchResultsActivity;
@@ -30,6 +31,7 @@ public class MainFragment extends Fragment {
     private FragmentMainBinding binding;
     private MainViewModel mainViewModel;
     private static final String EXTRA_ETIQUETA = "etiqueta";
+    private boolean isFirstTime = false;
 
     public MainFragment() {
         // Es necesario un constructor vacio
@@ -137,26 +139,30 @@ public class MainFragment extends Fragment {
         });
 
         mainViewModel.getListaCoches().observe(getViewLifecycleOwner(), listaCoches -> inicializarCoches(listaCoches));
-        
+
         mainViewModel.getSearchOn().observe(getViewLifecycleOwner(), searchOn -> {
             if (searchOn == null) { // No hay búsqueda en curso
-                 binding.btnBuscar.setText("Buscar");
+                Log.d("MainFragmentPrueba", "No hay búsqueda en curso");
+                binding.btnBuscar.setText("Buscar");
                 binding.btnBuscar.setAlpha(1f);
                 binding.btnBuscar.setEnabled(true);
             } else if(searchOn){ // Hay una búsqueda en curso
+                Log.d("MainFragmentPrueba", "Búsqueda en curso");
                 binding.message.setText("");
                 binding.btnBuscar.setText("Buscando...");
                 binding.btnBuscar.setAlpha(0.5f);
                 binding.btnBuscar.setEnabled(false);
+                isFirstTime = true;
             }else{ // Búsqueda finalizada
-                binding.btnBuscar.setText("Buscar");
-                binding.btnBuscar.setAlpha(1f);
-                binding.btnBuscar.setEnabled(true);
                 //Lista null -> error
                 if(mainViewModel.getListaPlazas().getValue() == null || mainViewModel.getListaPlazas().getValue().isEmpty()){
-                    binding.message.setText(mainViewModel.getError().getValue());
-                    mainViewModel.resetSearchOn();
+                    Log.d("MainFragmentPruebaError", "No se han encontrado plazas");
+                    String e = mainViewModel.getError().getValue();
+                    if(!e.equals("")) {
+                        binding.message.setText(e);
+                        mainViewModel.resetSearchOn();}
                 }else{ //Lista con plazas -> ir a resultados
+                    Log.d("MainFragmentPrueba", "Se han encontrado plazas");
                     binding.message.setText("");
                     Intent intent = new Intent(getActivity(), SearchResultsActivity.class);
 
@@ -182,9 +188,7 @@ public class MainFragment extends Fragment {
                     intent.putExtra("inicioH", binding.inStartTime.getText().toString());
                     intent.putExtra("finH", binding.inEndTime.getText().toString());
 
-                    Log.d("GOTORESULTS", "1111");
                     startActivity(intent);
-                    Log.d("GOTORESULTS", "2222");
                 }
             }
         });
@@ -255,7 +259,10 @@ public class MainFragment extends Fragment {
             binding.spinnerEtiquetaMedioambiental.setSelection(0);
             binding.spinnerTipoVehiculo.setSelection(0);
             binding.Matricula.setText("");
+            mainViewModel.resetSearchOn();
         }{
+            mainViewModel.resetSearchOn();
+            binding.message.setText("La reserva debe ser anterior a la fecha y hora actual. Se han actualizado las horas");
             inicializarFecha();
             Hora horaActual = Hora.horaActual();
             int tiempo = (new Hora(binding.inStartTime.getText().toString())).diferenciaEnMinutos(new Hora(binding.inEndTime.getText().toString()));
@@ -263,7 +270,6 @@ public class MainFragment extends Fragment {
             horaActual.sumarMinutos(abs(tiempo));
             binding.inEndTime.setText(horaActual.toString());
         }
-        mainViewModel.resetSearchOn();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.lksnext.parkingplantilla.view.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -150,7 +151,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         binding.btnReturn.setOnClickListener(v->{
             Intent intent = new Intent(SearchResultsActivity.this, MainActivity.class);
-            startActivity(intent);
+            setResult(Activity.RESULT_OK, intent); //startActivity(intent);
             finish();
         });
     }

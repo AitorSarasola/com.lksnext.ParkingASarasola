@@ -177,7 +177,7 @@ public class DataRepository {
         return matcher.matches();
     }
     public static boolean isValidLicensePlate(String plate) {
-        String licensePlateRegex = "^\\d{4}[ -]?[A-PR-Z]{3}$";
+        String licensePlateRegex = "^\\d{4}[ -]?[[B-DF-HJ-NP-TV-Z]{3}]{3}$";
         Pattern pattern = Pattern.compile(licensePlateRegex);
         Matcher matcher = pattern.matcher(plate);
         return matcher.matches();
