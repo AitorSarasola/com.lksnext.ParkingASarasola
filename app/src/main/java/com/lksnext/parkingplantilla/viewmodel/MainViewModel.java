@@ -76,7 +76,7 @@ public class MainViewModel extends ViewModel {
                     carNames.add(carInfo);
                 }
                 listaCoches.setValue(carNames);
-                if(carNames.size() <= 0) {
+                if(carNames.isEmpty()) {
                     List<String> listaVacia = new ArrayList<>();
                     listaVacia.add("*No hay coches registrados");
                     listaCoches.setValue(listaVacia);
@@ -114,7 +114,9 @@ public class MainViewModel extends ViewModel {
         Car.Type tipo = Car.Type.values()[tipoIndex];
         List<String> etiquetas = Car.getValidLabels(Car.Label.values()[etiquetaIndex]);
         Fecha fecha = new Fecha(unekListaFechas.get(fechaIndex));
-        Hora iniTime, endTime;
+
+        Hora iniTime;
+        Hora endTime;
         try{
             iniTime = new Hora(iniTimeS);
             endTime = new Hora(endTimeS);
@@ -143,7 +145,7 @@ public class MainViewModel extends ViewModel {
             return;
         }
 
-        DataRepository.searchParkingSpacces(matricula, tipo, etiquetas, prefElectrico, prefAccesivilidad, fecha, iniTime, endTime, new CallbackList<Plaza>() {
+        DataRepository.searchParkingSpacces(tipo, etiquetas, prefElectrico, prefAccesivilidad, fecha, iniTime, endTime, new CallbackList<Plaza>() {
             @Override
             public void onSuccess(List<Plaza> lista) {
                 if (lista == null || lista.isEmpty()) {

@@ -48,6 +48,16 @@ public class Hora implements Comparable<Hora>{
         this.minutos = minutos;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Hora otra = (Hora) obj;
+        return this.horas == otra.horas &&
+                this.minutos == otra.minutos;
+    }
+
+    @Override
     public int compareTo(Hora otra) {
         if (this.horas != otra.horas) {
             return Integer.compare(this.horas, otra.horas);

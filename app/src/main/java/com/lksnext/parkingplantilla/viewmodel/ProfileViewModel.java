@@ -2,8 +2,6 @@ package com.lksnext.parkingplantilla.viewmodel;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.ContactsContract;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -14,10 +12,6 @@ import com.lksnext.parkingplantilla.data.DataRepository;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.CallbackList;
 import com.lksnext.parkingplantilla.domain.Car;
-
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.CollectionReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +45,7 @@ public class ProfileViewModel extends ViewModel {
 
             @Override
             public void onFailure(String errorM) {
-                listaCoches.setValue(new ArrayList<Car>());
+                listaCoches.setValue(new ArrayList<>());
             }
         });
     }

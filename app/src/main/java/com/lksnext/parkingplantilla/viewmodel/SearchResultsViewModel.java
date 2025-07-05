@@ -67,7 +67,7 @@ public class SearchResultsViewModel extends ViewModel {
             return;
         }
 
-        DataRepository.searchParkingSpacces(matricula, tipo, etiquetas, prefElectrico, prefAccesivilidad, fecha, iniH, finH, new CallbackList<Plaza>() {
+        DataRepository.searchParkingSpacces(tipo, etiquetas, prefElectrico, prefAccesivilidad, fecha, iniH, finH, new CallbackList<Plaza>() {
             @Override
             public void onSuccess(List<Plaza> lista) {
                 listaPlazas.setValue(lista);

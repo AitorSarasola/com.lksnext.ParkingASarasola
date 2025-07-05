@@ -31,7 +31,7 @@ public class Car {
 
     public Car(String matricula, String tipo, String etiqueta, boolean isParaDiscapacitados, boolean isElectrico){
         this.matricula = matricula;
-        if(tipo.toUpperCase().equals("MOTO"))
+        if(tipo.equalsIgnoreCase("MOTO"))
             this.tipo = Type.MOTO;
         else
             this.tipo = Type.COCHE;

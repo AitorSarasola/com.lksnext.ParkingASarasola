@@ -25,6 +25,7 @@ public class MainFragment extends Fragment {
 
     private FragmentMainBinding binding;
     private MainViewModel mainViewModel;
+    private static final String EXTRA_ETIQUETA = "etiqueta";
 
     public MainFragment() {
         // Es necesario un constructor vacio
@@ -139,9 +140,7 @@ public class MainFragment extends Fragment {
             binding.Matricula.setText(car.getMatricula());
         });
 
-        mainViewModel.getListaCoches().observe(getViewLifecycleOwner(), listaCoches -> {
-            inicializarCoches(listaCoches);
-        });
+        mainViewModel.getListaCoches().observe(getViewLifecycleOwner(), listaCoches -> inicializarCoches(listaCoches));
         
         mainViewModel.getSearchOn().observe(getViewLifecycleOwner(), searchOn -> {
             if (searchOn == null) { // No hay búsqueda en curso
@@ -158,7 +157,7 @@ public class MainFragment extends Fragment {
                 binding.btnBuscar.setAlpha(1f);
                 binding.btnBuscar.setEnabled(true);
                 //Lista null -> error
-                if(mainViewModel.getListaPlazas().getValue() == null || mainViewModel.getListaPlazas().getValue().size() <= 0){
+                if(mainViewModel.getListaPlazas().getValue() == null || mainViewModel.getListaPlazas().getValue().isEmpty()){
                     binding.message.setText(mainViewModel.getError().getValue());
                     mainViewModel.resetSearchOn();
                 }else{ //Lista con plazas -> ir a resultados
@@ -175,10 +174,10 @@ public class MainFragment extends Fragment {
                         intent.putExtra("tipoVehiculo", Car.Type.MOTO);
 
                     switch (binding.spinnerEtiquetaMedioambiental.getSelectedItemPosition()){
-                        case 1: intent.putExtra("etiqueta",Car.Label.CERO_EMISIONES);break;
-                        case 2: intent.putExtra("etiqueta",Car.Label.ECO);break;
-                        case 3: intent.putExtra("etiqueta",Car.Label.B);break;
-                        default: intent.putExtra("etiqueta",Car.Label.C);
+                        case 1: intent.putExtra(EXTRA_ETIQUETA,Car.Label.CERO_EMISIONES);break;
+                        case 2: intent.putExtra(EXTRA_ETIQUETA,Car.Label.ECO);break;
+                        case 3: intent.putExtra(EXTRA_ETIQUETA,Car.Label.B);break;
+                        default: intent.putExtra(EXTRA_ETIQUETA,Car.Label.C);
                     }
 
                     intent.putExtra("prefElec",binding.spinnerCargadorElec.getSelectedItemPosition()-1);

@@ -20,7 +20,7 @@ public class Plaza implements Serializable {
 
     public Plaza(String id, String tipo, String etiqueta, boolean isParaDiscapacitados, boolean isElectrico){
         this.id = id;
-        if(tipo.toUpperCase().equals("MOTO"))
+        if(tipo.equalsIgnoreCase("MOTO"))
             this.tipo = Car.Type.MOTO;
         else
             this.tipo = Car.Type.COCHE;

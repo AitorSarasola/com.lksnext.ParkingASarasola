@@ -1,8 +1,8 @@
 package com.lksnext.parkingplantilla.view.activity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +13,6 @@ import com.lksnext.parkingplantilla.domain.Car;
 import com.lksnext.parkingplantilla.domain.Fecha;
 import com.lksnext.parkingplantilla.domain.Hora;
 import com.lksnext.parkingplantilla.domain.Plaza;
-import com.lksnext.parkingplantilla.view.fragment.CarItemAdapter;
 import com.lksnext.parkingplantilla.view.fragment.ParkingSpaceAdapter;
 import com.lksnext.parkingplantilla.viewmodel.SearchResultsViewModel;
 
@@ -25,6 +24,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private SearchResultsViewModel searchResultsViewModel;
     private RecyclerView recyclerView;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         //Asignamos la vista/interfaz de registro
@@ -39,17 +39,25 @@ public class SearchResultsActivity extends AppCompatActivity {
         String matricula = getIntent().getStringExtra("matricula");
         binding.inMatricula.setText(matricula);
 
-        Car.Type tipoVehiculo = (Car.Type) getIntent().getSerializableExtra("tipoVehiculo");
+        Car.Type tipoVehiculo;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            tipoVehiculo = getIntent().getSerializableExtra("tipoVehiculo", Car.Type.class);
+        else
+            tipoVehiculo = (Car.Type) getIntent().getSerializableExtra("tipoVehiculo");
 
-        if (tipoVehiculo != null && tipoVehiculo == Car.Type.MOTO){
+        if (tipoVehiculo != null && tipoVehiculo == Car.Type.MOTO)
             binding.imageVehicle.setImageResource(R.drawable.ic_motorbike);
-        }
 
-        Car.Label etiqueta = (Car.Label) getIntent().getSerializableExtra("etiqueta");
+        Car.Label etiqueta;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            etiqueta = getIntent().getSerializableExtra("etiqueta", Car.Label.class);
+        else
+            etiqueta = (Car.Label) getIntent().getSerializableExtra("etiqueta");
+
         int prefElec = getIntent().getIntExtra("prefElec",2);
         int prefAccesibilidad = getIntent().getIntExtra("prefAccesibilidad",2);
 
-        Fecha fecha = (Fecha) new Fecha((String) getIntent().getStringExtra("fecha"));
+        Fecha fecha = new Fecha((String) getIntent().getStringExtra("fecha"));
         String iniHora = getIntent().getStringExtra("inicioH");
         Hora inicioH = new Hora(iniHora);
         String finHora = getIntent().getStringExtra("finH");
@@ -58,7 +66,11 @@ public class SearchResultsActivity extends AppCompatActivity {
         //Inicializamos la descripción de la búsqueda
         inicializarDescripcion(tipoVehiculo, etiqueta, prefElec, prefAccesibilidad, fecha, inicioH, finH);
 
-        List<Plaza> plazas = (ArrayList<Plaza>) getIntent().getSerializableExtra("listaPlazas");
+        List<Plaza> plazas;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            plazas = (ArrayList<Plaza>) getIntent().getSerializableExtra("listaPlazas", ArrayList.class);
+        else
+            plazas = (ArrayList<Plaza>) getIntent().getSerializableExtra("listaPlazas");
         searchResultsViewModel.setListaPlazas(plazas);
 
         searchResultsViewModel.getListaPlazas().observe(this, plazasList -> {
@@ -75,7 +87,7 @@ public class SearchResultsActivity extends AppCompatActivity {
             }
         });
 
-        searchResultsViewModel.getError().observe(this, errorMessage -> {;
+        searchResultsViewModel.getError().observe(this, errorMessage -> {
             if (errorMessage != null) {
                 binding.Mensaje.setText(errorMessage);
             } else {
@@ -103,11 +115,21 @@ public class SearchResultsActivity extends AppCompatActivity {
         else
             descripcion += "Etiqueta Máxima: " + etiqueta.toString() + "\n";
 
-        descripcion += (prefElec == 0 ? "Sin Cargador Eléctrico." :
-                prefElec == 1 ? "Con Cargador Eléctrico." : "Sin Preferencia por Cargador Eléctrico.") + "\n";
+        if (prefElec == 0) {
+            descripcion += "Sin Cargador Eléctrico.\n";
+        } else if (prefElec == 1) {
+            descripcion += "Con Cargador Eléctrico.\n";
+        } else {
+            descripcion += "Sin Preferencia por Cargador Eléctrico.\n";
+        }
 
-        descripcion += (prefAccesibilidad == 0 ? "No Apto Para Discapacitados." :
-                prefAccesibilidad == 1 ? "Apto Para Discapacitados." : "Sin Preferencia De Accesibilidad.") + "\n\n";
+        if (prefAccesibilidad == 0) {
+            descripcion += "No Apto Para Discapacitados.\n\n";
+        } else if (prefAccesibilidad == 1) {
+            descripcion += "Apto Para Discapacitados.\n\n";
+        } else {
+            descripcion += "Sin Preferencia De Accesibilidad.\n\n";
+        }
 
         descripcion += fecha.toString() + ":   " + inicioH.toString() + " - " + finH.toString();
         binding.txtDescription.setText(descripcion);

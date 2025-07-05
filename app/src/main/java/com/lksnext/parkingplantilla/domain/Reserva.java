@@ -1,8 +1,5 @@
 package com.lksnext.parkingplantilla.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Reserva {
 
     private String reservaId;
@@ -23,6 +20,10 @@ public class Reserva {
         this.day = day;
         this.iniTime = iniTime;
         this.endTime = endTime;
+    }
+
+    public String getReservaId() {
+        return reservaId;
     }
 
     public String getUser() {

@@ -1,9 +1,9 @@
 package com.lksnext.parkingplantilla.domain;
 
 public class Fecha implements Comparable<Fecha> {
-    public int año;
-    public int mes;
-    public int dia;
+    private int ano;
+    private int mes;
+    private int dia;
 
     // Constructor con formato YYYY-MM-DD
     public Fecha(String fechaStr) {
@@ -28,11 +28,11 @@ public class Fecha implements Comparable<Fecha> {
             this.mes = Integer.parseInt(partes[1]);
 
             // Año puede ser 2 o 4 dígitos
-            String añoStr = partes[2];
-            if (añoStr.length() == 2) {
-                this.año = 2000 + Integer.parseInt(añoStr);
-            } else if (añoStr.length() == 4) {
-                this.año = Integer.parseInt(añoStr);
+            String anoStr = partes[2];
+            if (anoStr.length() == 2) {
+                this.ano = 2000 + Integer.parseInt(anoStr);
+            } else if (anoStr.length() == 4) {
+                this.ano = Integer.parseInt(anoStr);
             } else {
                 throw new IllegalArgumentException("Formato de año inválido");
             }
@@ -47,29 +47,38 @@ public class Fecha implements Comparable<Fecha> {
 
     // Validar fecha básica (no usa librerías externas)
     private boolean esFechaValida() {
-        if (año < 1) return false;
+        if (ano < 1) return false;
         if (mes < 1 || mes > 12) return false;
-        if (dia < 1 || dia > diasEnMes(mes, año)) return false;
-        return true;
+        return !(dia < 1 || dia > diasEnMes(mes, ano));
     }
 
-    private int diasEnMes(int mes, int año) {
+    private int diasEnMes(int mes, int ano) {
         switch (mes) {
-            case 2: return esBisiesto(año) ? 29 : 28;
+            case 2: return esBisiesto(ano) ? 29 : 28;
             case 4: case 6: case 9: case 11: return 30;
             default: return 31;
         }
     }
 
-    private boolean esBisiesto(int año) {
-        return (año % 4 == 0 && año % 100 != 0) || (año % 400 == 0);
+    private boolean esBisiesto(int ano) {
+        return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Fecha otra = (Fecha) obj;
+        return this.ano == otra.ano &&
+                this.mes == otra.mes &&
+                this.dia == otra.dia;
     }
 
     // Comparar fechas
     @Override
     public int compareTo(Fecha otra) {
-        if (this.año != otra.año) {
-            return Integer.compare(this.año, otra.año);
+        if (this.ano != otra.ano) {
+            return Integer.compare(this.ano, otra.ano);
         }
         if (this.mes != otra.mes) {
             return Integer.compare(this.mes, otra.mes);
@@ -81,14 +90,14 @@ public class Fecha implements Comparable<Fecha> {
     public void sumarDias(int diasASumar) {
         int totalDias = this.dia + diasASumar;
         int m = this.mes;
-        int a = this.año;
+        int a = this.ano;
 
         while (true) {
             int diasMes = diasEnMes(m, a);
             if (totalDias <= diasMes) {
                 this.dia = totalDias;
                 this.mes = m;
-                this.año = a;
+                this.ano = a;
                 break;
             } else {
                 totalDias -= diasMes;
@@ -105,7 +114,7 @@ public class Fecha implements Comparable<Fecha> {
     public void restarDias(int diasARestar) {
         int totalDias = this.dia - diasARestar;
         int m = this.mes;
-        int a = this.año;
+        int a = this.ano;
 
         while (totalDias < 1) {
             m--;
@@ -121,15 +130,15 @@ public class Fecha implements Comparable<Fecha> {
 
         this.dia = totalDias;
         this.mes = m;
-        this.año = a;
+        this.ano = a;
     }
 
     public int diferenciaEnDias(Fecha otra){
-        int dias_, mes_, año_;
-        dias_ = this.dia - otra.dia;
-        mes_ = this.mes - otra.mes;
-        año_ = this.año - otra.año;
-        return año_ * 365 + mes_ * 30 + dias_; // Aproximación simple
+        int dias_lag, mes_lag, ano_lag;
+        dias_lag = this.dia - otra.dia;
+        mes_lag = this.mes - otra.mes;
+        ano_lag = this.ano - otra.ano;
+        return ano_lag * 365 + mes_lag * 30 + dias_lag; // Aproximación simple
     }
 
     @Override
@@ -149,15 +158,15 @@ public class Fecha implements Comparable<Fecha> {
             case 11: mesName = "Noviembre"; break;
             default: mesName = "Diciembre";
         }
-        return String.format("%02d de %s de %04d", dia, mesName, año);
+        return String.format("%02d de %s de %04d", dia, mesName, ano);
     }
 
     public String toStringForFirestore() {
-        return String.format("%04d-%02d-%02d", año, mes, dia);
+        return String.format("%04d-%02d-%02d", ano, mes, dia);
     }
 
     public String toStringForApi() {
-        return String.format("%02d-%02d-%04d", dia, mes, año);
+        return String.format("%02d-%02d-%04d", dia, mes, ano);
     }
 
     public static String invertirFormatoFecha(String input) {

@@ -89,11 +89,8 @@ public class DataRepository {
                     HashMap<String, Object> userMap = new HashMap<>();
                     userMap.put("name",userLag);
                     firestore.collection("users").document(id).set(userMap)
-                            .addOnSuccessListener(aVoid ->{
-                                callback.onSuccess();
-                            }).addOnFailureListener(e -> {
-                                callback.onFailure();
-                            });
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onFailure());
                 } else {
                     callback.onFailure();
                 }
@@ -208,7 +205,7 @@ public class DataRepository {
                 .collection("Coches")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<Car> L = new ArrayList<>();
+                    List<Car> lista = new ArrayList<>();
 
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         String matricula = doc.getString("Matricula");
@@ -218,13 +215,11 @@ public class DataRepository {
                         String label = doc.getString("Label");
 
                         Car car = new Car(matricula, type, label,Boolean.TRUE.equals(isParaDiscapacitados), Boolean.TRUE.equals(isElectrico));
-                        L.add(car);
+                        lista.add(car);
                     }
-                    callback.onSuccess(L);
+                    callback.onSuccess(lista);
                 })
-                .addOnFailureListener(e -> {
-                    callback.onFailure("Error, no se han encontrado coches.");
-                });
+                .addOnFailureListener(e -> callback.onFailure("Error, no se han encontrado coches."));
     }
 
     public void deleteCar(Car carToDelete, Callback callback) {
@@ -249,7 +244,7 @@ public class DataRepository {
                 .addOnFailureListener(e -> callback.onFailure("Error al eliminar el coche."));
     }
 
-    public static void searchParkingSpacces(String matricula, Car.Type tipo, List<String> etiquetas, int prefElectrico, int prefAccesivilidad, Fecha fecha, Hora iniTime, Hora endTime, CallbackList<Plaza> callback) {
+    public static void searchParkingSpacces(Car.Type tipo, List<String> etiquetas, int prefElectrico, int prefAccesivilidad, Fecha fecha, Hora iniTime, Hora endTime, CallbackList<Plaza> callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Query query = db.collection("ParkingSpace")
@@ -298,8 +293,6 @@ public class DataRepository {
     public static void isPlazaAvailable(Plaza plaza, Fecha fecha, Hora iniTime, Hora endTime, CallbackBool callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Log.d("ISPLAZAAVAIL","FECHA: "+fecha.toStringForFirestore()+" INI: "+iniTime.toString()+" END: "+endTime.toString());
-
         db.collection("Bookings")
                 .whereEqualTo("isCancelled",false)
                 .whereEqualTo("parkingSpace", plaza.getId())
@@ -307,14 +300,13 @@ public class DataRepository {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     boolean disponible = true;
-                    Log.d("ISPLAZAAVAIL","F");
+
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         String iniTimeLag = doc.getString("iniTime");
                         String endTimeLag = doc.getString("endTime");
-                        Log.d("ISPLAZAAVAIL","INI: "+iniTimeLag+" END: "+endTimeLag);
+
                         // Si hay solapamiento, la plaza no está disponible
                         if (iniTime.toString().compareTo(endTimeLag) < 0 && iniTimeLag.compareTo(endTime.toString()) < 0) {
-                            Log.d("ISPLAZAAVAIL","Plaza no disponible por solapamiento."+(iniTime.toString().compareTo(endTimeLag) < 0)+" - "+(endTime.toString().compareTo(iniTimeLag) > 0));
                             disponible = false;
                             break;
                         }
