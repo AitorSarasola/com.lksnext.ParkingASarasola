@@ -56,10 +56,10 @@ public class ParkingSpaceAdapter extends RecyclerView.Adapter<ParkingSpaceAdapte
 
         holder.txtMensaje.setVisibility(View.GONE);
 
-        if(plaza.isParaDiscapacitados())
+        if(!plaza.isParaDiscapacitados())
             holder.icon1.setVisibility(View.GONE);
 
-        if(plaza.isElectrico())
+        if(!plaza.isElectrico())
             holder.icon2.setVisibility(View.GONE);
 
         holder.btnReservar.setOnClickListener(v -> {

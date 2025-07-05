@@ -1,5 +1,9 @@
 package com.lksnext.parkingplantilla.view.fragment;
 
+import static java.lang.Math.abs;
+
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +19,6 @@ import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.domain.Car;
 import com.lksnext.parkingplantilla.domain.Fecha;
 import com.lksnext.parkingplantilla.domain.Hora;
-import com.lksnext.parkingplantilla.domain.Plaza;
 import com.lksnext.parkingplantilla.domain.Reserva;
 
 import java.util.List;
@@ -26,7 +29,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
     public interface OnBookEditListener {
         void onCancel(Reserva reserva);
-        void onAdd15Min(Reserva reserva, View view);
+        void onAdd15Min(Reserva reserva);
     }
 
     public BookingAdapter(List<Reserva> reservaList, OnBookEditListener listener) {
@@ -64,21 +67,32 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             label = "\n  Cero Emisiones";
         holder.txtEtiqueta.setText("• Etiqueta Medioambiental: " + label);
 
+        if(abs(reserva.getEndTime().diferenciaEnMinutos(reserva.getIniTime())) > 7*60 - 15) {
+            holder.btnAdd15.setEnabled(false);
+            holder.btnAdd15.setAlpha(0.5f);
+        }
+
         if (reserva.isCancelled()){
             holder.btnCancelar.setVisibility(View.GONE);
             holder.btnAdd15.setVisibility(View.GONE);
         }else
             holder.txtMensaje.setVisibility(View.GONE);
 
-        if(!(reserva.getDay().compareTo(Fecha.fechaActual()) >= 0 && reserva.getEndTime().compareTo(Hora.horaActual()) < 0)){
+        int lag = reserva.getDay().compareTo(Fecha.fechaActual());
+        if(lag < 0 || (lag <= 0 && reserva.getEndTime().compareTo(Hora.horaActual()) <= 0)){
             holder.btnCancelar.setVisibility(View.GONE);
             holder.btnAdd15.setVisibility(View.GONE);
+            if(lag == 0 && reserva.getEndTime().compareTo(Hora.horaActual()) <= 0) {
+                holder.txtMensaje.setVisibility(View.VISIBLE);
+                holder.txtMensaje.setText(" La Reserva Ha Terminado");
+                holder.txtMensaje.setTextColor(Color.parseColor("#54B9E0"));
+            }
         }
 
-        if(reserva.getPlaza().isParaDiscapacitados())
+        if(!reserva.getPlaza().isParaDiscapacitados())
             holder.icon1.setVisibility(View.GONE);
 
-        if(reserva.getPlaza().isElectrico())
+        if(!reserva.getPlaza().isElectrico())
             holder.icon2.setVisibility(View.GONE);
 
         holder.btnCancelar.setOnClickListener(v -> {
@@ -89,7 +103,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
         holder.btnAdd15.setOnClickListener(v -> {
             if(bookListener != null){
-                bookListener.onAdd15Min(reserva, holder.itemView);
+                bookListener.onAdd15Min(reserva);
             }
         });
 

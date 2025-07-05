@@ -3,11 +3,12 @@ package com.lksnext.parkingplantilla.view.fragment;
 import com.lksnext.parkingplantilla.R;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -18,8 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lksnext.parkingplantilla.databinding.FragmentBookingsBinding;
 import com.lksnext.parkingplantilla.domain.Reserva;
 import com.lksnext.parkingplantilla.viewmodel.BookingsViewModel;
-
-import java.util.ArrayList;
 
 public class BookingsFragment extends Fragment {
     private FragmentBookingsBinding binding;
@@ -39,7 +38,7 @@ public class BookingsFragment extends Fragment {
         binding.txtSelecActual.setText("Reservas Actuales");
         binding.txtMensaje.setText("");
 
-        bookingsViewModel.buscarReservasActuales();
+        bookingsViewModel.buscarReservas(1);
 
         binding.btnReservasActuales.setOnClickListener(view -> {
             bookingsViewModel.setError("");
@@ -57,7 +56,7 @@ public class BookingsFragment extends Fragment {
             binding.btnReservasActuales.setTextColor(white);
             binding.btnUltimos30Dias.setTextColor(orange);
 
-            bookingsViewModel.buscarReservasActuales();
+            bookingsViewModel.buscarReservas(1);
         });
 
         binding.btnUltimos30Dias.setOnClickListener(view -> {
@@ -76,7 +75,7 @@ public class BookingsFragment extends Fragment {
             binding.btnUltimos30Dias.setTextColor(white);
             binding.btnReservasActuales.setTextColor(orange);
 
-            bookingsViewModel.buscarUltimasReservas();
+            bookingsViewModel.buscarReservas(1);
         });
 
         bookingsViewModel.getListaReservas().observe(getViewLifecycleOwner(), listaReservas->{
@@ -85,18 +84,19 @@ public class BookingsFragment extends Fragment {
             }else{
                 binding.listaVaciaM.setText("");
             }
+
             if (listaReservas != null) {
             BookingAdapter adapter = new BookingAdapter(listaReservas, new BookingAdapter.OnBookEditListener() {
                 @Override
                 public void onCancel(Reserva reserva) { bookingsViewModel.cancelarReserva(reserva);}
 
                 @Override
-                public void onAdd15Min(Reserva reserva, View view) {
+                public void onAdd15Min(Reserva reserva) {
                     bookingsViewModel.añadir15Min(reserva, task ->{
                         if(task){
-                            //TODO
-                        }else{
-                            //TODO
+                            bookingsViewModel.buscarReservas(0);
+                            binding.txtMensaje.setTextColor(ContextCompat.getColor(requireContext(), R.color.light_blue));
+                            binding.txtMensaje.setText("Se ha postpuesto 15 minutos la hora final de la reserva.");
                         }
                     });
                 }

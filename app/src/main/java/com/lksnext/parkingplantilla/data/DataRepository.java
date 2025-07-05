@@ -1,5 +1,7 @@
 package com.lksnext.parkingplantilla.data;
 
+import static java.lang.Math.abs;
+
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -312,7 +314,10 @@ public class DataRepository {
             for (DocumentSnapshot doc : queryDocumentSnapshots) {
                 String iniTimeLag = doc.getString("iniTime");
                 String endTimeLag = doc.getString("endTime");
+                Boolean isCancelled = doc.getBoolean("isCancelled");
 
+                if(isCancelled == true)
+                    continue;
                 // Si hay solapamiento, la plaza no está disponible
                 if (iniTime.toString().compareTo(endTimeLag) < 0 && iniTimeLag.compareTo(endTime.toString()) < 0) {
                     disponible = false;
@@ -379,50 +384,41 @@ public class DataRepository {
 
         if (endDate != null)
             query = query.whereLessThanOrEqualTo("day", endDate.toStringForFirestore());
-        Log.d("GETALLBOOKINGS","000000000000000");
         query.get().addOnSuccessListener(querySnapshot -> {
             List<Reserva> reservas = new ArrayList<>();
             List<String> plazaIds = new ArrayList<>();
 
-            Log.d("GETALLBOOKINGS","111111111");
             for (DocumentSnapshot doc : querySnapshot) {
                 String id = doc.getId();
                 String matricula = doc.getString("car");
                 String plazaId = doc.getString("parkingSpace");
                 plazaIds.add(plazaId);
 
-                Log.d("GETALLBOOKINGS","2222222");
                 boolean isCancelled = doc.getBoolean("isCancelled");
                 String dayLag = doc.getString("day");
                 Fecha day = new Fecha(Fecha.invertirFormatoFecha(dayLag));
                 Hora iniTime = new Hora(doc.getString("iniTime"));
                 Hora endTime = new Hora(doc.getString("endTime"));
 
-                Log.d("GETALLBOOKINGS","33333333");
                 Reserva reserva = new Reserva(id, userId, matricula, null, isCancelled, day, iniTime, endTime);
                 reservas.add(reserva);
             }
-            Log.d("GETALLBOOKINGS","44444444");
             if (reservas.isEmpty()) {
                 callback.onSuccess(reservas); // nada que resolver
                 return;
             }
-            Log.d("GETALLBOOKINGS","555555555555");
             // Ahora resolvemos plazas de forma asíncrona
             List<Plaza> plazasCargadas = new ArrayList<>();
             final int[] contador = {0}; // control de completados
 
-            Log.d("GETALLBOOKINGS","666666666");
             for (int i = 0; i < plazaIds.size(); i++) {
                 String plazaId = plazaIds.get(i);
                 int index = i;
 
-                Log.d("GETALLBOOKINGS","7777777777");
                 getPlazaById(plazaId, new CallbackList<Plaza>() {
                     @Override
                     public void onSuccess(List<Plaza> plazas) {
                         if (!plazas.isEmpty()) {
-                            Log.d("GETALLBOOKINGS","Plaza: "+plazas.get(0).getId()+" - "+reservas.get(index).getReservaId());
                             reservas.get(index).setPlaza(plazas.get(0));
                         }
                         contador[0]++;
@@ -445,7 +441,6 @@ public class DataRepository {
 
         }).addOnFailureListener(e -> {
             callback.onFailure("Error al cargar reservas.");
-            Log.e("GETALLBOOKINGS","ERROR: "+e);
         });
     }
 
@@ -479,12 +474,96 @@ public class DataRepository {
 
         DocumentReference bookingRef = db.collection("Bookings").document(bookingId);
 
-        bookingRef.update("isCancelled", true)
-                .addOnSuccessListener(unused -> {
-                    callback.onResult(true);
+        bookingRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (!documentSnapshot.exists()) {
+                        callback.onResult(false);
+                        return;
+                    }
+
+                    String dayStr = documentSnapshot.getString("day"); // YYYY-MM-DD
+                    String endTimeStr = documentSnapshot.getString("endTime"); // HH:mm
+
+                    if (dayStr == null || endTimeStr == null) {
+                        callback.onResult(false);
+                        return;
+                    }
+
+                    // Parse fecha
+                    Fecha fecha = new Fecha(dayStr);
+                    Hora horaFinal = new Hora(endTimeStr);
+
+                    Fecha hoy = Fecha.fechaActual();
+                    Hora ahora = Hora.horaActual();
+                    //CAMBIAR PARA IMPLEMENTAR RESERVAS QUE PASEN MEDIANOCHE
+
+                    if (fecha.compareTo(hoy)<0 ||(fecha.compareTo(hoy)<=0 && horaFinal.compareTo(ahora)<0)) {
+                        // la reserva es futura → podemos cancelarla
+                        bookingRef.update("isCancelled", true)
+                                .addOnSuccessListener(unused -> callback.onResult(true))
+                                .addOnFailureListener(e -> callback.onResult(false));
+                    } else {
+                        // no se cancela porque ya pasó
+                        callback.onResult(false);
+                    }
                 })
                 .addOnFailureListener(e -> {
                     callback.onResult(false);
+                });
+    }
+
+    public static void add15minToBookingByID(Reserva booking, Callback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String bookingId = booking.getReservaId();
+
+        DocumentReference bookingRef = db.collection("Bookings").document(bookingId);
+        bookingRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (!documentSnapshot.exists()) {
+                        callback.onFailure();
+                        return;
+                    }
+                    String dayStr = Fecha.invertirFormatoFecha(documentSnapshot.getString("day")); // YYYY-MM-DD
+                    String iniTimeStr = documentSnapshot.getString("iniTime"); // YYYY-MM-DD
+                    String endTimeStr = documentSnapshot.getString("endTime"); // HH:mm
+
+                    if (iniTimeStr == null || endTimeStr == null || dayStr == null) {
+                        callback.onFailure();
+                        return;
+                    }
+
+                    // Parse fecha
+                    Fecha fecha = new Fecha(dayStr);
+                    Hora horaInicial = new Hora(iniTimeStr);
+                    Hora horaFinal = new Hora(endTimeStr);
+                    horaFinal.sumarMinutos(15);
+                    if(horaFinal.compareTo(new Hora(0,15)) < 0){
+                        callback.onFailure("La reserva no puede cruzar medianoche.");
+                        return;
+                    }
+                    if (abs(horaInicial.diferenciaEnMinutos(horaFinal)) > 7*60) {
+                        callback.onFailure("La reserva no puede superar 7 horas.");
+                        return;
+                    }
+                    Fecha hoy = Fecha.fechaActual();
+                    Hora ahora = Hora.horaActual();
+                    if (fecha.compareTo(hoy)<0 || (fecha.compareTo(hoy)<=0 && horaFinal.compareTo(ahora)<0)) {
+                        callback.onFailure("La reserva ya ha terminado.");
+                        return;
+                    }
+                    booking.setEndTime(horaFinal);
+                    isPlazaAvailable(booking.getPlaza(),fecha, horaInicial, horaFinal,bookingId, task->{
+                        if(task){
+                            bookingRef.update("endTime", horaFinal.toString())
+                                    .addOnSuccessListener(unused -> callback.onSuccess())
+                                    .addOnFailureListener(e -> callback.onFailure());
+                        }else{
+                            callback.onFailure("No se puede alargar la reserva, hay otra reserva después.");
+                        }
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailure();
                 });
     }
 

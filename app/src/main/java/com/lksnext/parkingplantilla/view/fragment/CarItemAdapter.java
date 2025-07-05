@@ -50,10 +50,10 @@ public class CarItemAdapter extends RecyclerView.Adapter<CarItemAdapter.CarViewH
         else
             holder.carTypeImage.setImageResource(R.drawable.ic_motorbike);
 
-        if(car.isParaDiscapacitados())
+        if(!car.isParaDiscapacitados())
             holder.icon1.setVisibility(View.GONE);
 
-        if(car.isElectrico())
+        if(!car.isElectrico())
             holder.icon2.setVisibility(View.GONE);
 
         holder.btnBorrar.setOnClickListener(v -> {
