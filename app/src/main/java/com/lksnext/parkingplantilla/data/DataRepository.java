@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.Query;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.CallbackBool;
@@ -15,6 +17,7 @@ import com.lksnext.parkingplantilla.domain.Car;
 import com.lksnext.parkingplantilla.domain.Fecha;
 import com.lksnext.parkingplantilla.domain.Hora;
 import com.lksnext.parkingplantilla.domain.Plaza;
+import com.lksnext.parkingplantilla.domain.Reserva;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -275,7 +278,7 @@ public class DataRepository {
                         boolean isElec = doc.getBoolean("isElectrico");
                         boolean isDis = doc.getBoolean("isParaDiscapacitados");
                         Plaza plaza = new Plaza(id, tipo, Car.Label.valueOf(unekLabel), isElec, isDis);
-                        isPlazaAvailable(plaza, fecha, iniTime, endTime, disponible -> {
+                        isPlazaAvailable(plaza, fecha, iniTime, endTime,null, disponible -> {
                             if (disponible) {
                                 plazas.add(plaza);
                             }
@@ -290,40 +293,45 @@ public class DataRepository {
     }
 
     //NOTA para Rervas que crucen medianoche: Coger el dia anterior y el siguiente y dependiendo de si cruca o no hacer los calculos corespondientes.
-    public static void isPlazaAvailable(Plaza plaza, Fecha fecha, Hora iniTime, Hora endTime, CallbackBool callback) {
+    public static void isPlazaAvailable(Plaza plaza, Fecha fecha, Hora iniTime, Hora endTime, String bookingId, CallbackBool callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("Bookings")
+        Query query = db.collection("Bookings")
                 .whereEqualTo("isCancelled",false)
                 .whereEqualTo("parkingSpace", plaza.getId())
-                .whereEqualTo("day", fecha.toStringForFirestore())
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    boolean disponible = true;
+                .whereEqualTo("day", fecha.toStringForFirestore());
 
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        String iniTimeLag = doc.getString("iniTime");
-                        String endTimeLag = doc.getString("endTime");
+        if(bookingId != null && !bookingId.isEmpty()) {
+            query = query.whereNotEqualTo(FieldPath.documentId(), bookingId); // Excluir la reserva actual si se está editando
+        }
 
-                        // Si hay solapamiento, la plaza no está disponible
-                        if (iniTime.toString().compareTo(endTimeLag) < 0 && iniTimeLag.compareTo(endTime.toString()) < 0) {
-                            disponible = false;
-                            break;
-                        }
-                    }
-                    callback.onResult(disponible);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("ISPLAZAAVAIL", "Error al comprobar disponibilidad de la plaza.", e);
-                    callback.onResult(false); // Por seguridad, asumimos no disponible
-                });
+        query.get()
+        .addOnSuccessListener(queryDocumentSnapshots -> {
+            boolean disponible = true;
+
+            for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                String iniTimeLag = doc.getString("iniTime");
+                String endTimeLag = doc.getString("endTime");
+
+                // Si hay solapamiento, la plaza no está disponible
+                if (iniTime.toString().compareTo(endTimeLag) < 0 && iniTimeLag.compareTo(endTime.toString()) < 0) {
+                    disponible = false;
+                    break;
+                }
+            }
+            callback.onResult(disponible);
+        })
+        .addOnFailureListener(e -> {
+            Log.e("ISPLAZAAVAIL", "Error al comprobar disponibilidad de la plaza.", e);
+            callback.onResult(false); // Por seguridad, asumimos no disponible
+        });
     }
 
     public static void bookParkingSpace(Plaza plaza,String matricula, Fecha fecha, Hora iniH, Hora finH, Callback callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        isPlazaAvailable(plaza, fecha, iniH, finH, disponible -> {
+        isPlazaAvailable(plaza, fecha, iniH, finH, null, disponible -> {
             if (!disponible) {
                 callback.onFailure("La plaza no está disponible en el horario seleccionado.");
             }else{
@@ -359,5 +367,125 @@ public class DataRepository {
         return null;
     }
 
+    public static void getBookingsForUserBetweenDates(Fecha startDate, Fecha endDate, CallbackList<Reserva> callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        Query query = db.collection("Bookings")
+                .whereEqualTo("userId", userId);
+
+        if (startDate != null)
+            query = query.whereGreaterThanOrEqualTo("day", startDate.toStringForFirestore());
+
+        if (endDate != null)
+            query = query.whereLessThanOrEqualTo("day", endDate.toStringForFirestore());
+        Log.d("GETALLBOOKINGS","000000000000000");
+        query.get().addOnSuccessListener(querySnapshot -> {
+            List<Reserva> reservas = new ArrayList<>();
+            List<String> plazaIds = new ArrayList<>();
+
+            Log.d("GETALLBOOKINGS","111111111");
+            for (DocumentSnapshot doc : querySnapshot) {
+                String id = doc.getId();
+                String matricula = doc.getString("car");
+                String plazaId = doc.getString("parkingSpace");
+                plazaIds.add(plazaId);
+
+                Log.d("GETALLBOOKINGS","2222222");
+                boolean isCancelled = doc.getBoolean("isCancelled");
+                String dayLag = doc.getString("day");
+                Fecha day = new Fecha(Fecha.invertirFormatoFecha(dayLag));
+                Hora iniTime = new Hora(doc.getString("iniTime"));
+                Hora endTime = new Hora(doc.getString("endTime"));
+
+                Log.d("GETALLBOOKINGS","33333333");
+                Reserva reserva = new Reserva(id, userId, matricula, null, isCancelled, day, iniTime, endTime);
+                reservas.add(reserva);
+            }
+            Log.d("GETALLBOOKINGS","44444444");
+            if (reservas.isEmpty()) {
+                callback.onSuccess(reservas); // nada que resolver
+                return;
+            }
+            Log.d("GETALLBOOKINGS","555555555555");
+            // Ahora resolvemos plazas de forma asíncrona
+            List<Plaza> plazasCargadas = new ArrayList<>();
+            final int[] contador = {0}; // control de completados
+
+            Log.d("GETALLBOOKINGS","666666666");
+            for (int i = 0; i < plazaIds.size(); i++) {
+                String plazaId = plazaIds.get(i);
+                int index = i;
+
+                Log.d("GETALLBOOKINGS","7777777777");
+                getPlazaById(plazaId, new CallbackList<Plaza>() {
+                    @Override
+                    public void onSuccess(List<Plaza> plazas) {
+                        if (!plazas.isEmpty()) {
+                            Log.d("GETALLBOOKINGS","Plaza: "+plazas.get(0).getId()+" - "+reservas.get(index).getReservaId());
+                            reservas.get(index).setPlaza(plazas.get(0));
+                        }
+                        contador[0]++;
+                        if (contador[0] == plazaIds.size()) {
+                            // todas las plazas resueltas
+                            callback.onSuccess(reservas);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        // si falla alguna plaza, igualmente avanzamos
+                        contador[0]++;
+                        if (contador[0] == plazaIds.size()) {
+                            callback.onSuccess(reservas);
+                        }
+                    }
+                });
+            }
+
+        }).addOnFailureListener(e -> {
+            callback.onFailure("Error al cargar reservas.");
+            Log.e("GETALLBOOKINGS","ERROR: "+e);
+        });
+    }
+
+
+    public static void getPlazaById(String plazaId, CallbackList<Plaza> callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("ParkingSpace")
+                .document(plazaId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String id = documentSnapshot.getId();
+                        String tipo = documentSnapshot.getString("Type");
+                        String unekLabel = documentSnapshot.getString("Label").toUpperCase().replace(' ','_');
+                        boolean isElec = documentSnapshot.getBoolean("isElectrico");
+                        boolean isDis = documentSnapshot.getBoolean("isParaDiscapacitados");
+                        Plaza plaza = new Plaza(id, Car.Type.valueOf(tipo), Car.Label.valueOf(unekLabel), isElec, isDis);
+                        List<Plaza> plazas = new ArrayList<>();
+                        plazas.add(plaza);
+                        callback.onSuccess(plazas);
+                    } else {
+                        callback.onFailure("La Plaza No Existe.");
+                    }
+                })
+                .addOnFailureListener(e->Log.e("GETALLBOOKINGS","Error: "+e));
+    }
+
+    public static void cancelBookingById(String bookingId, CallbackBool callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference bookingRef = db.collection("Bookings").document(bookingId);
+
+        bookingRef.update("isCancelled", true)
+                .addOnSuccessListener(unused -> {
+                    callback.onResult(true);
+                })
+                .addOnFailureListener(e -> {
+                    callback.onResult(false);
+                });
+    }
 
 }

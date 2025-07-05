@@ -17,6 +17,7 @@
         android:textStyle="bold"
         android:textColor="@color/orange"
         android:text="BUSCADOR"
+        android:layout_marginTop="-5dp"
         app:layout_constraintTop_toTopOf="parent"
         android:gravity="right"
         />
