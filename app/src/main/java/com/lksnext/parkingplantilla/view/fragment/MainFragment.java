@@ -1,5 +1,7 @@
 package com.lksnext.parkingplantilla.view.fragment;
 
+import static java.lang.Math.abs;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,8 +14,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.lksnext.parkingplantilla.databinding.FragmentMainBinding;
+import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.Car;
 import com.lksnext.parkingplantilla.domain.Plaza;
+import com.lksnext.parkingplantilla.domain.Hora;
 import com.lksnext.parkingplantilla.view.activity.SearchResultsActivity;
 import com.lksnext.parkingplantilla.viewmodel.MainViewModel;
 
@@ -95,15 +99,7 @@ public class MainFragment extends Fragment {
         binding.refreshCarsButton.setOnClickListener(v-> mainViewModel.cargarCoches());
 
         binding.refreshButton.setOnClickListener(v->{
-            binding.message.setText("");
-            inicializarHora();
-            inicializarFecha();
-            binding.spinnerCargadorElec.setSelection(0);
-            binding.spinnerDiscapacidad.setSelection(0);
-            binding.spinnerEtiquetaMedioambiental.setSelection(0);
-            binding.spinnerTipoVehiculo.setSelection(0);
-            binding.Matricula.setText("");
-            mainViewModel.resetSearchOn();
+            refresh(0);
         });
 
         binding.btnAplicar.setOnClickListener(view -> {
@@ -203,14 +199,25 @@ public class MainFragment extends Fragment {
 
             mainViewModel.buscarPlazas(binding.Matricula.getText().toString(),
 
-                    binding.spinnerTipoVehiculo.getSelectedItemPosition()-1,
-                    binding.spinnerEtiquetaMedioambiental.getSelectedItemPosition()-1,
-                    binding.spinnerCargadorElec.getSelectedItemPosition()-1,
-                    binding.spinnerDiscapacidad.getSelectedItemPosition()-1,
+                    binding.spinnerTipoVehiculo.getSelectedItemPosition() - 1,
+                    binding.spinnerEtiquetaMedioambiental.getSelectedItemPosition() - 1,
+                    binding.spinnerCargadorElec.getSelectedItemPosition() - 1,
+                    binding.spinnerDiscapacidad.getSelectedItemPosition() - 1,
 
                     binding.inDate.getSelectedItemPosition(),
                     binding.inStartTime.getText().toString(),
-                    binding.inEndTime.getText().toString()
+                    binding.inEndTime.getText().toString(), new Callback() {
+                        @Override
+                        public void onSuccess() {}
+
+                        @Override
+                        public void onFailure() {
+                            refresh(1);
+                        }
+
+                        @Override
+                        public void onFailure(String errorM) {}
+                    }
             );
         });
 
@@ -235,6 +242,28 @@ public class MainFragment extends Fragment {
                 getActivity(), android.R.layout.simple_list_item_1, lista);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerCoches.setAdapter(adapter);
+    }
+
+    private void refresh(int i) {
+        if(i == 0){
+            binding.message.setText("");
+            mainViewModel.resetSearchOn();
+            inicializarFecha();
+            inicializarHora();
+            binding.spinnerCargadorElec.setSelection(0);
+            binding.spinnerDiscapacidad.setSelection(0);
+            binding.spinnerEtiquetaMedioambiental.setSelection(0);
+            binding.spinnerTipoVehiculo.setSelection(0);
+            binding.Matricula.setText("");
+        }{
+            inicializarFecha();
+            Hora horaActual = Hora.horaActual();
+            int tiempo = (new Hora(binding.inStartTime.getText().toString())).diferenciaEnMinutos(new Hora(binding.inEndTime.getText().toString()));
+            binding.inStartTime.setText(horaActual.toString());
+            horaActual.sumarMinutos(abs(tiempo));
+            binding.inEndTime.setText(horaActual.toString());
+        }
+        mainViewModel.resetSearchOn();
     }
 
 }

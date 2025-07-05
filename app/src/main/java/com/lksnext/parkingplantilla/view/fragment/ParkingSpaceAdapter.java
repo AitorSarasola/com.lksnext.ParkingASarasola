@@ -21,7 +21,7 @@ public class ParkingSpaceAdapter extends RecyclerView.Adapter<ParkingSpaceAdapte
     private OnPlazaBookedListener bookListener;
 
     public interface OnPlazaBookedListener {
-        void onPlazaBooked(Plaza plaza);
+        void onPlazaBooked(Plaza plaza, View itemView);
     }
 
     public ParkingSpaceAdapter(List<Plaza> plazaList, OnPlazaBookedListener listener) {
@@ -64,7 +64,7 @@ public class ParkingSpaceAdapter extends RecyclerView.Adapter<ParkingSpaceAdapte
 
         holder.btnReservar.setOnClickListener(v -> {
             if(bookListener != null){
-                bookListener.onPlazaBooked(plaza);
+                bookListener.onPlazaBooked(plaza, holder.itemView);
             }
         });
 

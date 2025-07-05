@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.lksnext.parkingplantilla.data.DataRepository;
+import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.CallbackList;
 import com.lksnext.parkingplantilla.domain.Car;
 import com.lksnext.parkingplantilla.domain.Fecha;
@@ -100,7 +101,7 @@ public class MainViewModel extends ViewModel {
 
     /* prefElectrico 0 -> No, 1 -> Sí, 2 -> No importa*/
     /* prefAccesivilidad 0 -> No, 1 -> Sí, 2 -> No importa*/
-    public void buscarPlazas(String matricula, int tipoIndex, int etiquetaIndex, int prefElectrico, int prefAccesivilidad, int fechaIndex, String iniTimeS, String endTimeS) {
+    public void buscarPlazas(String matricula, int tipoIndex, int etiquetaIndex, int prefElectrico, int prefAccesivilidad, int fechaIndex, String iniTimeS, String endTimeS, Callback calllback) {
         searchOn.setValue(true);
         error.setValue("");
         listaPlazas.setValue(null);
@@ -126,21 +127,26 @@ public class MainViewModel extends ViewModel {
             return;
         }
 
-        int timeInMinutes = iniTime.diferenciaEnMinutos(endTime);
-        if(timeInMinutes<0){
-            //timeInMinutes = 24*60 + timeInMinutes; // IMPLEMENTAR SI SE QUIERE PERMITIR RESERVAS QUE CRUCEN LA MEDIA NOCHE
-            error.setValue("La hora inicial debe ser anterior a la hora final.");
-            searchOn.setValue(false);
-            return;
-        }
-        if(timeInMinutes < 5){
-            error.setValue("La reserva debe durar al menos 5 minutos.");
-            searchOn.setValue(false);
-            return;
+        Fecha currentDate = Fecha.fechaActual();
+        Hora currentTime = Hora.horaActual();
+
+        Boolean cambioFecha = false;
+        // Ajustamos fecha y hora si la hora de inicio ya ha pasado
+        if (fecha.compareTo(currentDate) < 0 ||
+                (fecha.compareTo(currentDate) == 0 && iniTime.compareTo(currentTime) < 0)) {
+            iniTime = currentTime;
+            fecha = currentDate;
+            cambioFecha = true;
         }
 
-        if(timeInMinutes > 60*9){
-            error.setValue("La reserva no puede superar las 9 horas.");
+        String lag = DataRepository.validHours(iniTime, endTime);
+        if(lag != null) {
+            if(cambioFecha) {
+                calllback.onFailure();
+                if(lag.equals("La hora de inicio debe ser anterior a la hora de fin."))
+                    error.setValue("La reserva debe ser anterior a la fecha actual.");
+            }else
+                error.setValue(lag);
             searchOn.setValue(false);
             return;
         }
