@@ -42,8 +42,8 @@ public class DataRepository {
     private static final String HORA_INICIO = "iniTime";
     private static final String HORA_FINAL = "endTime";
 
-    private DataRepository(){
-
+    public DataRepository(){
+        //Clase para llamar a metodos y reciclar código.
     }
 
     //Creación de la instancia en caso de que no exista.
@@ -172,34 +172,42 @@ public class DataRepository {
         return user != null;
     }
 
-    private static boolean isValidEmail(String email) {
+    public static boolean isValidEmail(String email) {
+        if(email==null)
+            return false;
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
 
-    private boolean isValidUser(String user) {
+    public boolean isValidUser(String user) {
+        if(user==null)
+            return false;
         String userRegex = "^[a-zA-Z0-9_ ]{2,"+(USERNAME_MAX_LENGTH-1)+"}[a-zA-Z0-9_]$";
         Pattern pattern = Pattern.compile(userRegex);
         Matcher matcher = pattern.matcher(user);
         return matcher.matches();
     }
 
-    private boolean isValidPassword(String pass) {
-        String userRegex = "^[a-zA-Z0-9!\\ \"#$%&'()*+,-./:;<=>?@\\[\\]^_`{|}~]{3,20}$";
+    public boolean isValidPassword(String pass) {
+        if(pass==null)
+            return false;
+        String userRegex = "^[a-zA-Z0-9!\\\"$%#&'()*+,-./:;<=>?@\\[\\]^_`{|}~]{3,20}$";
         Pattern pattern = Pattern.compile(userRegex);
         Matcher matcher = pattern.matcher(pass);
         return matcher.matches();
     }
     public static boolean isValidLicensePlate(String plate) {
+        if(plate==null)
+            return false;
         String licensePlateRegex = "^\\d{4}[ -]?[[B-DF-HJ-NP-TV-Z]{3}]{3}$";
         Pattern pattern = Pattern.compile(licensePlateRegex);
         Matcher matcher = pattern.matcher(plate);
         return matcher.matches();
     }
 
-    private static String standarizeLicensePlate(String plate) {
+    public static String standarizeLicensePlate(String plate) {
         // Eliminar espacios y guiones
         plate = plate.replaceAll("[ -]", "");
         // Formatear a XXXX-YYY
@@ -327,7 +335,7 @@ public class DataRepository {
                 String endTimeLag = doc.getString(HORA_FINAL);
                 Boolean isCancelled = doc.getBoolean(IS_CANCELLED);
 
-                if(isCancelled)
+                if(isCancelled.equals(Boolean.TRUE))
                     continue;
                 // Si hay solapamiento, la plaza no está disponible
                 if (iniTime.toString().compareTo(endTimeLag) < 0 && iniTimeLag.compareTo(endTime.toString()) < 0) {
@@ -382,8 +390,8 @@ public class DataRepository {
         if(timeInMinutes < 5)
             return("La reserva debe durar al menos 5 minutos.");
 
-        if(timeInMinutes > 60*9)
-            return("La reserva no puede superar las 9 horas.");
+        if(timeInMinutes > 60*8)
+            return("La reserva no puede superar las 8 horas.");
 
         return null;
     }

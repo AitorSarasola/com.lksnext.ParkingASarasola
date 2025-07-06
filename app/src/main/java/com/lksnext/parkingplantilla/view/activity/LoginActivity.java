@@ -11,18 +11,10 @@ import com.lksnext.parkingplantilla.databinding.ActivityLoginBinding;
 import com.lksnext.parkingplantilla.viewmodel.LoginViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
-import com.google.android.gms.common.api.ApiException;
-import android.util.Log;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.GoogleAuthProvider;
-
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
     private LoginViewModel loginViewModel;
-
-    private static final int RC_SIGN_IN = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

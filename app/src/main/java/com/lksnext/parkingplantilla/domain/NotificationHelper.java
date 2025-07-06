@@ -65,9 +65,9 @@ public class NotificationHelper {
 
 
     public static void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
-                Log.d(NOTIFICATION_ID, "Permiso denegado para enviar notificaciones");
+        if (requestCode == PERMISSION_REQUEST_CODE
+                && !(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            Log.d(NOTIFICATION_ID, "Permiso denegado para enviar notificaciones");
         }
     }
 

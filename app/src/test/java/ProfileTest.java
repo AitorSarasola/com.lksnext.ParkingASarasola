@@ -17,7 +17,7 @@ public class ProfileTest {
 
         Boolean result = LiveDataTestUtil.getValue(vm.getLogout());
 
-        assertEquals(result,Boolean.FALSE);
+        assertEquals(Boolean.FALSE,result);
 
         //No se puede hacer pq logout llama a un Handler
         /*vm.logout();
