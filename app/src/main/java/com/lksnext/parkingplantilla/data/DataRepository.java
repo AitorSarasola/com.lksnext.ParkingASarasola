@@ -38,7 +38,7 @@ public class DataRepository {
 
     private static final String BUSCAR_RESERVAS = "Bookings";
     private static final String IS_CANCELLED = "isCancelled";
-    private static final String PLAZA = "parkingSpace";
+    private static final String PLAZA = "ParkingSpace";
     private static final String HORA_INICIO = "iniTime";
     private static final String HORA_FINAL = "endTime";
 
