@@ -146,7 +146,7 @@ public class Fecha implements Comparable<Fecha> {
             dias += esBisiesto(y) ? 366 : 365;
         }
         // contar los días de meses completos de este año
-        for (int m = 1; m < anoLag; m++) {
+        for (int m = 1; m < this.mes; m++) {
             dias += diasEnMes(m, anoLag);
         }
         // sumar los días transcurridos en el mes actual
