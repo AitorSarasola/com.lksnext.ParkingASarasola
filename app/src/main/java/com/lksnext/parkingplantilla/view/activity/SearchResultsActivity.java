@@ -62,7 +62,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         int prefElec = getIntent().getIntExtra("prefElec",2);
         int prefAccesibilidad = getIntent().getIntExtra("prefAccesibilidad",2);
 
-        Fecha fecha = new Fecha((String) getIntent().getStringExtra("fecha"));
+        Fecha fecha = new Fecha(getIntent().getStringExtra("fecha"));
         searchResultsViewModel.setFecha(fecha);
         String iniHora = getIntent().getStringExtra("inicioH");
         Hora inicioH = new Hora(iniHora);
@@ -71,12 +71,12 @@ public class SearchResultsActivity extends AppCompatActivity {
         Hora finH = new Hora(finHora);
         searchResultsViewModel.setFinH(finH);
 
-        //Inicializamos la descripción de la búsqueda
+        //Iniciar la descripción de la búsqueda
         inicializarDescripcion(tipoVehiculo, etiqueta, prefElec, prefAccesibilidad);
 
         List<Plaza> plazas;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            plazas = (ArrayList<Plaza>) getIntent().getSerializableExtra("listaPlazas", ArrayList.class);
+            plazas = getIntent().getSerializableExtra("listaPlazas", ArrayList.class);
         else
             plazas = (ArrayList<Plaza>) getIntent().getSerializableExtra("listaPlazas");
         searchResultsViewModel.setListaPlazas(plazas);
@@ -151,7 +151,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         binding.btnReturn.setOnClickListener(v->{
             Intent intent = new Intent(SearchResultsActivity.this, MainActivity.class);
-            setResult(Activity.RESULT_OK, intent); //startActivity(intent);
+            setResult(Activity.RESULT_OK, intent);
             finish();
         });
     }

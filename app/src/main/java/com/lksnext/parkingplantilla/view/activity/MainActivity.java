@@ -1,7 +1,6 @@
 package com.lksnext.parkingplantilla.view.activity;
 
 import android.os.Bundle;
-import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;

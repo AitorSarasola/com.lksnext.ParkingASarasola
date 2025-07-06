@@ -1,9 +1,5 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -132,7 +128,7 @@ public class MainViewModel extends ViewModel {
         Fecha currentDate = Fecha.fechaActual();
         Hora currentTime = Hora.horaActual();
 
-        Boolean cambioFecha = false;
+        boolean cambioFecha = false;
         // Ajustamos fecha y hora si la hora de inicio ya ha pasado
         if (fecha.compareTo(currentDate) < 0 ||
                 (fecha.compareTo(currentDate) == 0 && iniTime.compareTo(currentTime) < 0)) {
