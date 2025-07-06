@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -24,19 +23,20 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import android.os.Bundle;
 import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
 public class NotificationHelper {
 
+    private static final String NOTIFICATION_ID = "NOTIFICACION ENVIAR";
     private static final String CHANNEL_ID = "reservas_channel";
     private static final int PERMISSION_REQUEST_CODE = 1001;
 
-    /**
-     * LLAMAR ESTO DESDE MainActivity.onCreate()
-     */
+    private NotificationHelper() {
+        //Vacío
+    }
+
     public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Canal de Reservas";
@@ -50,37 +50,29 @@ public class NotificationHelper {
         }
     }
 
-    /**
-     * LLAMAR ESTO DESDE MainActivity.onCreate()
-     */
+
     public static void requestNotificationPermission(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                if (context instanceof android.app.Activity) {
-                    ActivityCompat.requestPermissions((android.app.Activity) context,
-                            new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                            PERMISSION_REQUEST_CODE);
-                }
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED &&
+                context instanceof android.app.Activity) {
+
+            ActivityCompat.requestPermissions((android.app.Activity) context,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    PERMISSION_REQUEST_CODE);
         }
     }
 
-    /**
-     * LLAMAR ESTO DESDE MainActivity.onRequestPermissionsResult()
-     */
+
     public static void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            } else {
-                Log.d("NOTIFICACION ENVIAR", "Permiso denegado para enviar notificaciones");
-            }
+            if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                Log.d(NOTIFICATION_ID, "Permiso denegado para enviar notificaciones");
         }
     }
 
     public static void scheduleNotification(Context context, String reservaId, String title, String text, long delayInMinutes) {
-        Log.d("NOTIFICACION ENVIAR", "Programando notificación en " + delayInMinutes + " minutos");
+        Log.d(NOTIFICATION_ID, "Programando notificación en " + delayInMinutes + " minutos");
 
         Data data = new Data.Builder()
                 .putString("title", title)
@@ -113,22 +105,24 @@ public class NotificationHelper {
             String text = getInputData().getString("text");
             int id = getInputData().getInt("id", 0);
 
-            Log.d("NOTIFICACION ENVIAR", "Worker ejecutando notificación con título: " + title);
+            Log.d(NOTIFICATION_ID, "Worker ejecutando notificación con título: " + title);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_parking)
                     .setContentTitle(title)
                     .setContentText(text)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setVibrate(new long[]{0, 500, 250, 500})
+                    .setVibrate(new long[]{250, 500, 500, 250})
                     .setDefaults(NotificationCompat.DEFAULT_SOUND | NotificationCompat.DEFAULT_VIBRATE)
                     .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE);
+
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                     ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS)
                             == PackageManager.PERMISSION_GRANTED) {
                 NotificationManagerCompat.from(getApplicationContext()).notify(id, builder.build());
-            } else {
-            }
+            } else
+                Log.d(NOTIFICATION_ID,"Error Permisos");
             return Result.success();
         }
     }

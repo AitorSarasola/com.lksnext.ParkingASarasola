@@ -4,7 +4,6 @@ import static java.lang.Math.abs;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.lksnext.parkingplantilla.databinding.FragmentMainBinding;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.Car;
-import com.lksnext.parkingplantilla.domain.Fecha;
 import com.lksnext.parkingplantilla.domain.Plaza;
 import com.lksnext.parkingplantilla.domain.Hora;
 import com.lksnext.parkingplantilla.view.activity.SearchResultsActivity;
@@ -31,7 +29,6 @@ public class MainFragment extends Fragment {
     private FragmentMainBinding binding;
     private MainViewModel mainViewModel;
     private static final String EXTRA_ETIQUETA = "etiqueta";
-    private boolean isFirstTime = false;
 
     public MainFragment() {
         // Es necesario un constructor vacio
@@ -100,9 +97,7 @@ public class MainFragment extends Fragment {
         // Botón para volver a cargar los coches
         binding.refreshCarsButton.setOnClickListener(v-> mainViewModel.cargarCoches());
 
-        binding.refreshButton.setOnClickListener(v->{
-            refresh(0);
-        });
+        binding.refreshButton.setOnClickListener(v-> refresh(0));
 
         binding.btnAplicar.setOnClickListener(view -> {
             if(binding.spinnerCoches.getSelectedItemPosition() <= 0){
@@ -138,31 +133,26 @@ public class MainFragment extends Fragment {
             binding.Matricula.setText(car.getMatricula());
         });
 
-        mainViewModel.getListaCoches().observe(getViewLifecycleOwner(), listaCoches -> inicializarCoches(listaCoches));
+        mainViewModel.getListaCoches().observe(getViewLifecycleOwner(), this::inicializarCoches);
 
         mainViewModel.getSearchOn().observe(getViewLifecycleOwner(), searchOn -> {
             if (searchOn == null) { // No hay búsqueda en curso
-                Log.d("MainFragmentPrueba", "No hay búsqueda en curso");
                 binding.btnBuscar.setText("Buscar");
                 binding.btnBuscar.setAlpha(1f);
                 binding.btnBuscar.setEnabled(true);
             } else if(searchOn){ // Hay una búsqueda en curso
-                Log.d("MainFragmentPrueba", "Búsqueda en curso");
                 binding.message.setText("");
                 binding.btnBuscar.setText("Buscando...");
                 binding.btnBuscar.setAlpha(0.5f);
                 binding.btnBuscar.setEnabled(false);
-                isFirstTime = true;
             }else{ // Búsqueda finalizada
                 //Lista null -> error
                 if(mainViewModel.getListaPlazas().getValue() == null || mainViewModel.getListaPlazas().getValue().isEmpty()){
-                    Log.d("MainFragmentPruebaError", "No se han encontrado plazas");
                     String e = mainViewModel.getError().getValue();
                     if(!e.equals("")) {
                         binding.message.setText(e);
                         mainViewModel.resetSearchOn();}
                 }else{ //Lista con plazas -> ir a resultados
-                    Log.d("MainFragmentPrueba", "Se han encontrado plazas");
                     binding.message.setText("");
                     Intent intent = new Intent(getActivity(), SearchResultsActivity.class);
 
@@ -212,7 +202,7 @@ public class MainFragment extends Fragment {
                     binding.inStartTime.getText().toString(),
                     binding.inEndTime.getText().toString(), new Callback() {
                         @Override
-                        public void onSuccess() {}
+                        public void onSuccess() {/*Solo se necesita saber si resetear o no*/}
 
                         @Override
                         public void onFailure() {
@@ -220,7 +210,7 @@ public class MainFragment extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(String errorM) {}
+                        public void onFailure(String errorM) {/*Solo se necesita saber si resetear o no*/}
                     }
             );
         });
@@ -260,7 +250,7 @@ public class MainFragment extends Fragment {
             binding.spinnerTipoVehiculo.setSelection(0);
             binding.Matricula.setText("");
             mainViewModel.resetSearchOn();
-        }{
+        }else{
             mainViewModel.resetSearchOn();
             binding.message.setText("La reserva debe ser anterior a la fecha y hora actual. Se han actualizado las horas");
             inicializarFecha();

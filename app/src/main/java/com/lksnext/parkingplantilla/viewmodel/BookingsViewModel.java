@@ -1,15 +1,10 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.ContentInfo;
-import android.view.View;
-import android.widget.ImageButton;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.data.DataRepository;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.CallbackBool;
@@ -87,28 +82,23 @@ public class BookingsViewModel extends ViewModel {
     }
 
     public void cancelarReserva(Reserva reserva, Context context){
-        DataRepository.cancelBookingById(reserva.getReservaId(), context, new CallbackBool() {
-            @Override
-            public void onResult(boolean result) {
-                if(result){
-                    buscarReservas(1);
-                }else{
-                    buscarReservas(0);
-                    setError("No se ha podido cancelar la reserva.");
-                }
+        DataRepository.cancelBookingById(reserva.getReservaId(), context, result -> {
+            if(result){
+                buscarReservas(1);
+            }else{
+                buscarReservas(0);
+                setError("No se ha podido cancelar la reserva.");
             }
         });
     }
 
-    public void añadir15Min(Reserva reserva, Context context, CallbackBool callback){
+    public void add15Min(Reserva reserva, Context context, CallbackBool callback){
         int index = listaReservas.getValue().indexOf(reserva);
         if (index < 0) {
             callback.onResult(false);
             setError("Reserva no encontrada.");
         }
         Reserva reservaLag = listaReservas.getValue().get(index);
-        Fecha fecha = reservaLag.getDay();
-        Hora ini = reservaLag.getIniTime();
         Hora fin = reservaLag.getEndTime();
         //Cambiar para reservas pasada medianoche.
         fin.sumarMinutos(15);
@@ -141,7 +131,6 @@ public class BookingsViewModel extends ViewModel {
     }
 
     public void buscarReservas(int on){
-        //Log.d("ERRORADD15", "11111");
         if(on != 0)
             setError("");
         if(reservasActuales)

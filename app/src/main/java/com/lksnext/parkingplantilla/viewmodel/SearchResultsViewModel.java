@@ -1,7 +1,6 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
 import android.content.Context;
-import android.telecom.Call;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;

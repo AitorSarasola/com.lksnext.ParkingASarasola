@@ -3,12 +3,9 @@ package com.lksnext.parkingplantilla.view.fragment;
 import com.lksnext.parkingplantilla.R;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -35,7 +32,6 @@ public class BookingsFragment extends Fragment {
 
         bookingsViewModel = new ViewModelProvider(this).get(BookingsViewModel.class);
 
-        //binding.txtSelecActual.setText("Reservas Actuales");
         bookingsViewModel.setError("");
 
         bookingsViewModel.buscarReservas(1);
@@ -43,8 +39,6 @@ public class BookingsFragment extends Fragment {
         binding.btnReservasActuales.setOnClickListener(view -> {
             bookingsViewModel.setError("");
             bookingsViewModel.setReservasActuales(true);
-            //binding.txtSelecActual.setText("Reservas Actuales");
-            // Obtener colores correctamente
             int orange = ContextCompat.getColor(requireContext(), R.color.orange);
             int white = ContextCompat.getColor(requireContext(), R.color.design_default_color_background);
 
@@ -62,8 +56,6 @@ public class BookingsFragment extends Fragment {
         binding.btnUltimos30Dias.setOnClickListener(view -> {
             bookingsViewModel.setError("");
             bookingsViewModel.setReservasActuales(false);
-            //binding.txtSelecActual.setText("Reservas de los Últimos 30 Días");
-            // Obtener colores correctamente
             int orange = ContextCompat.getColor(requireContext(), R.color.orange);
             int white = ContextCompat.getColor(requireContext(), R.color.design_default_color_background);
 
@@ -94,7 +86,7 @@ public class BookingsFragment extends Fragment {
 
                 @Override
                 public void onAdd15Min(Reserva reserva) {
-                    bookingsViewModel.añadir15Min(reserva, getActivity(), task ->{
+                    bookingsViewModel.add15Min(reserva, getActivity(), task ->{
                         if(task){
                             bookingsViewModel.buscarReservas(0);
                             binding.txtMensaje.setTextColor(ContextCompat.getColor(requireContext(), R.color.light_blue));
@@ -116,10 +108,6 @@ public class BookingsFragment extends Fragment {
                 binding.txtMensaje.setText(e);
             }
         });
-
-        // Aquí puedes configurar el adaptador y cargar las reservas
-        // BookingAdapter bookingAdapter = new BookingAdapter(reservaList, bookListener);
-        // recyclerView.setAdapter(bookingAdapter);
 
         return root;
     }

@@ -35,7 +35,13 @@ public class DataRepository {
 
     private static DataRepository instance;
     private static final int USERNAME_MAX_LENGTH = 20; // Longitud máxima del nombre de usuario
-    private static final String CHANNEL_ID = "NOTIFICACIONES_PARKING";
+
+    private static final String BUSCAR_RESERVAS = "Bookings";
+    private static final String IS_CANCELLED = "isCancelled";
+    private static final String PLAZA = "parkingSpace";
+    private static final String HORA_INICIO = "iniTime";
+    private static final String HORA_FINAL = "endTime";
+
     private DataRepository(){
 
     }
@@ -254,10 +260,10 @@ public class DataRepository {
                 .addOnFailureListener(e -> callback.onFailure("Error al eliminar el coche."));
     }
 
-    public static void searchParkingSpacces(Car.Type tipo, List<String> etiquetas, int prefElectrico, int prefAccesivilidad, Fecha fecha, Hora iniTime, Hora endTime, CallbackList<Plaza> callback) {
+    public static void searchParkingSpacces(Car.Type tipo, List<String> etiquetas, int prefElectrico, int prefAccesivilidad, Fecha fecha, Hora HORA_INICIO, Hora endTime, CallbackList<Plaza> callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Query query = db.collection("ParkingSpace")
+        Query query = db.collection(PLAZA)
                 .whereEqualTo("Type", tipo.toString())
                 .whereIn("Label", etiquetas);
 
@@ -285,7 +291,7 @@ public class DataRepository {
                         boolean isElec = doc.getBoolean("isElectrico");
                         boolean isDis = doc.getBoolean("isParaDiscapacitados");
                         Plaza plaza = new Plaza(id, tipo, Car.Label.valueOf(unekLabel), isElec, isDis);
-                        isPlazaAvailable(plaza, fecha, iniTime, endTime,null, disponible -> {
+                        isPlazaAvailable(plaza, fecha, HORA_INICIO, endTime,null, disponible -> {
                             if (disponible) {
                                 plazas.add(plaza);
                             }
@@ -303,9 +309,9 @@ public class DataRepository {
     public static void isPlazaAvailable(Plaza plaza, Fecha fecha, Hora iniTime, Hora endTime, String bookingId, CallbackBool callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Query query = db.collection("Bookings")
-                .whereEqualTo("isCancelled",false)
-                .whereEqualTo("parkingSpace", plaza.getId())
+        Query query = db.collection(BUSCAR_RESERVAS)
+                .whereEqualTo(IS_CANCELLED,false)
+                .whereEqualTo(PLAZA, plaza.getId())
                 .whereEqualTo("day", fecha.toStringForFirestore());
 
         if(bookingId != null && !bookingId.isEmpty()) {
@@ -317,11 +323,11 @@ public class DataRepository {
             boolean disponible = true;
 
             for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                String iniTimeLag = doc.getString("iniTime");
-                String endTimeLag = doc.getString("endTime");
-                Boolean isCancelled = doc.getBoolean("isCancelled");
+                String iniTimeLag = doc.getString(HORA_INICIO);
+                String endTimeLag = doc.getString(HORA_FINAL);
+                Boolean isCancelled = doc.getBoolean(IS_CANCELLED);
 
-                if(isCancelled == true)
+                if(isCancelled)
                     continue;
                 // Si hay solapamiento, la plaza no está disponible
                 if (iniTime.toString().compareTo(endTimeLag) < 0 && iniTimeLag.compareTo(endTime.toString()) < 0) {
@@ -347,19 +353,19 @@ public class DataRepository {
             }else{
                 // Crear un nuevo documento de reserva
                 HashMap<String, Object> booking = new HashMap<>();
-                booking.put("parkingSpace", plaza.getId());
+                booking.put(PLAZA, plaza.getId());
                 booking.put("car", matricula);
                 booking.put("day", fecha.toStringForFirestore());
-                booking.put("iniTime", iniH.toString());
-                booking.put("endTime", finH.toString());
+                booking.put(HORA_INICIO, iniH.toString());
+                booking.put(HORA_FINAL, finH.toString());
                 booking.put("userId", userId);
-                booking.put("isCancelled", false);
+                booking.put(IS_CANCELLED, false);
 
-                db.collection("Bookings").add(booking)
+                db.collection(BUSCAR_RESERVAS).add(booking)
                         .addOnSuccessListener(documentReference -> {
                             String id = documentReference.getId();
                             Reserva reserva = new Reserva(id, userId, matricula, plaza, false, fecha, iniH, finH);
-                            notificaciones5_15y30minutos(context, reserva);
+                            notificaciones5y15y30minutos(context, reserva);
                             callback.onSuccess();
                         })
                         .addOnFailureListener(e -> callback.onFailure("Error al reservar la plaza."));
@@ -386,7 +392,7 @@ public class DataRepository {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        Query query = db.collection("Bookings")
+        Query query = db.collection(BUSCAR_RESERVAS)
                 .whereEqualTo("userId", userId);
 
         if (startDate != null)
@@ -401,14 +407,14 @@ public class DataRepository {
             for (DocumentSnapshot doc : querySnapshot) {
                 String id = doc.getId();
                 String matricula = doc.getString("car");
-                String plazaId = doc.getString("parkingSpace");
+                String plazaId = doc.getString(PLAZA);
                 plazaIds.add(plazaId);
 
-                boolean isCancelled = doc.getBoolean("isCancelled");
+                boolean isCancelled = doc.getBoolean(IS_CANCELLED);
                 String dayLag = doc.getString("day");
                 Fecha day = new Fecha(Fecha.invertirFormatoFecha(dayLag));
-                Hora iniTime = new Hora(doc.getString("iniTime"));
-                Hora endTime = new Hora(doc.getString("endTime"));
+                Hora iniTime = new Hora(doc.getString(HORA_INICIO));
+                Hora endTime = new Hora(doc.getString(HORA_FINAL));
 
                 Reserva reserva = new Reserva(id, userId, matricula, null, isCancelled, day, iniTime, endTime);
                 reservas.add(reserva);
@@ -418,7 +424,6 @@ public class DataRepository {
                 return;
             }
             // Ahora resolvemos plazas de forma asíncrona
-            List<Plaza> plazasCargadas = new ArrayList<>();
             final int[] contador = {0}; // control de completados
 
             for (int i = 0; i < plazaIds.size(); i++) {
@@ -449,16 +454,14 @@ public class DataRepository {
                 });
             }
 
-        }).addOnFailureListener(e -> {
-            callback.onFailure("Error al cargar reservas.");
-        });
+        }).addOnFailureListener(e -> callback.onFailure("Error al cargar reservas."));
     }
 
 
     public static void getPlazaById(String plazaId, CallbackList<Plaza> callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("ParkingSpace")
+        db.collection(PLAZA)
                 .document(plazaId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -482,7 +485,7 @@ public class DataRepository {
     public static void cancelBookingById(String bookingId, Context context, CallbackBool callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        DocumentReference bookingRef = db.collection("Bookings").document(bookingId);
+        DocumentReference bookingRef = db.collection(BUSCAR_RESERVAS).document(bookingId);
         bookingRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (!documentSnapshot.exists()) {
@@ -492,7 +495,7 @@ public class DataRepository {
 
                     String dayStr = documentSnapshot.getString("day"); // YYYY-MM-DD
                     dayStr = Fecha.invertirFormatoFecha(dayStr);
-                    String endTimeStr = documentSnapshot.getString("endTime"); // HH:mm
+                    String endTimeStr = documentSnapshot.getString(HORA_FINAL); // HH:mm
 
                     if (dayStr == null || endTimeStr == null) {
                         callback.onResult(false);
@@ -508,9 +511,9 @@ public class DataRepository {
 
                     if (!(fecha.compareTo(hoy)<0 ||(fecha.compareTo(hoy)<=0 && horaFinal.compareTo(ahora)<0))) {
                         // la reserva es futura → podemos cancelarla
-                        bookingRef.update("isCancelled", true)
+                        bookingRef.update(IS_CANCELLED, true)
                                 .addOnSuccessListener(unused -> {
-                                    cancelaNotificaciones_15y30minutos(context, bookingId);
+                                    cancelaNotificaciones5y15y30minutos(context, bookingId);
                                     callback.onResult(true);
                                 })
                                 .addOnFailureListener(e -> callback.onResult(false));
@@ -529,22 +532,22 @@ public class DataRepository {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String bookingId = booking.getReservaId();
 
-        DocumentReference bookingRef = db.collection("Bookings").document(bookingId);
+        DocumentReference bookingRef = db.collection(BUSCAR_RESERVAS).document(bookingId);
         bookingRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (!documentSnapshot.exists()) {
                         callback.onFailure();
                         return;
                     }
-                    Boolean isCancelled = documentSnapshot.getBoolean("isCancelled");
-                    if(isCancelled){
+                    Boolean isCancelled = documentSnapshot.getBoolean(IS_CANCELLED);
+                    if(isCancelled.equals(Boolean.TRUE)){
                         callback.onFailure("La reserva está cancelada.");
                         return;
                     }
 
                     String dayStr = Fecha.invertirFormatoFecha(documentSnapshot.getString("day")); // YYYY-MM-DD
-                    String iniTimeStr = documentSnapshot.getString("iniTime"); // YYYY-MM-DD
-                    String endTimeStr = documentSnapshot.getString("endTime"); // HH:mm
+                    String iniTimeStr = documentSnapshot.getString(HORA_INICIO); // YYYY-MM-DD
+                    String endTimeStr = documentSnapshot.getString(HORA_FINAL); // HH:mm
 
                     if (iniTimeStr == null || endTimeStr == null || dayStr == null) {
                         callback.onFailure();
@@ -573,7 +576,7 @@ public class DataRepository {
                     booking.setEndTime(horaFinal);
                     isPlazaAvailable(booking.getPlaza(),fecha, horaInicial, horaFinal,bookingId, task->{
                         if(task){
-                            bookingRef.update("endTime", horaFinal.toString())
+                            bookingRef.update(HORA_FINAL, horaFinal.toString())
                                     .addOnSuccessListener(unused -> {
                                         booking.setEndTime(horaFinal); booking.setIniTime(horaInicial); booking.setDay(fecha);
                                         retrasarNotificaciones15min(context,booking);
@@ -585,35 +588,33 @@ public class DataRepository {
                         }
                     });
                 })
-                .addOnFailureListener(e -> {
-                    callback.onFailure();
-                });
+                .addOnFailureListener(e -> callback.onFailure());
     }
 
-    public static void notificaciones5_15y30minutos(Context context, Reserva reserva){
-        String titulo, texto, id, plaza;
-        id = reserva.getReservaId();
-        plaza = reserva.getPlaza().getId();
+    public static void notificaciones5y15y30minutos(Context context, Reserva reserva){
+        String titulo;
+        String texto;
+        String id;
 
         Fecha hoy = Fecha.fechaActual();
         Hora ahora = Hora.horaActual();
         long difMinutos = abs(ahora.diferenciaEnMinutos(reserva.getEndTime())) + 24*60*abs(hoy.diferenciaEnDias(reserva.getDay()));
-        long duración = abs(reserva.getIniTime().diferenciaEnMinutos(reserva.getEndTime()));
-        if(difMinutos > 30 && duración > 30){
+        long duracion = abs(reserva.getIniTime().diferenciaEnMinutos(reserva.getEndTime()));
+        if(difMinutos > 30 && duracion > 30){
             titulo = "Tu reserva termina en 30 minutos.";
             texto = "Tu reserva de la plaza Nº "+reserva.getPlaza().getId()+" con el vehículo "+reserva.getCar()+" termina en 30 minutos.";
             id = reserva.getReservaId()+"30";
             NotificationHelper.scheduleNotification(context, id, titulo, texto, difMinutos-5);
         }
 
-        if(difMinutos > 15 && duración > 15){
+        if(difMinutos > 15 && duracion > 15){
             titulo = "Tu reserva termina en 15 minutos.";
             texto = "Tu reserva de la plaza Nº "+reserva.getPlaza().getId()+" con el vehículo "+reserva.getCar()+" termina en 15 minutos.";
             id = reserva.getReservaId()+"15";
             NotificationHelper.scheduleNotification(context, id, titulo, texto, difMinutos-15);
         }
 
-        if(difMinutos > 5 && duración > 5){
+        if(difMinutos > 5 && duracion > 5){
             titulo = "Tu reserva termina en 5 minutos.";
             texto = "Tu reserva de la plaza Nº "+reserva.getPlaza().getId()+" con el vehículo "+reserva.getCar()+" termina en 5 minutos.";
             id = reserva.getReservaId()+"5";
@@ -621,7 +622,7 @@ public class DataRepository {
         }
     }
 
-    public static void cancelaNotificaciones_15y30minutos(Context context, String reservaId){
+    public static void cancelaNotificaciones5y15y30minutos(Context context, String reservaId){
         cancelReservationNotification(context, reservaId+"5");
         cancelReservationNotification(context, reservaId+"15");
         cancelReservationNotification(context,reservaId+"30");
@@ -629,9 +630,9 @@ public class DataRepository {
 
     public static void retrasarNotificaciones15min(Context context, Reserva reserva){
         String reservaId = reserva.getReservaId();
-        cancelaNotificaciones_15y30minutos(context, reservaId);
+        cancelaNotificaciones5y15y30minutos(context, reservaId);
 
-        notificaciones5_15y30minutos(context,reserva);
+        notificaciones5y15y30minutos(context,reserva);
     }
 
     private static void cancelReservationNotification(Context context, String reservaId) {
