@@ -133,12 +133,25 @@ public class Fecha implements Comparable<Fecha> {
         this.ano = a;
     }
 
-    public int diferenciaEnDias(Fecha otra){
-        int dias_lag, mes_lag, ano_lag;
-        dias_lag = this.dia - otra.dia;
-        mes_lag = this.mes - otra.mes;
-        ano_lag = this.ano - otra.ano;
-        return ano_lag * 365 + mes_lag * 30 + dias_lag; // Aproximación simple
+    public int diferenciaEnDias(Fecha otra) {
+        return contarDiasDesdeOrigen() - otra.contarDiasDesdeOrigen();
+    }
+
+    // contar días absolutos desde 01/01/0001
+    private int contarDiasDesdeOrigen() {
+        int dias = 0;
+        int anoLag = this.ano - 2000;
+        // contar los días de años completos
+        for (int y = 1; y < anoLag; y++) {
+            dias += esBisiesto(y) ? 366 : 365;
+        }
+        // contar los días de meses completos de este año
+        for (int m = 1; m < anoLag; m++) {
+            dias += diasEnMes(m, anoLag);
+        }
+        // sumar los días transcurridos en el mes actual
+        dias += this.dia;
+        return dias;
     }
 
     @Override

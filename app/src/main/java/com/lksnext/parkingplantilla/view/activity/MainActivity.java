@@ -12,6 +12,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.databinding.ActivityMainBinding;
+import com.lksnext.parkingplantilla.domain.NotificationHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = binding.bottomNavigationView;
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
+        NotificationHelper.createNotificationChannel(this);
+        NotificationHelper.requestNotificationPermission(this);
+
         //Dependendiendo que boton clique el usuario de la navegacion se hacen distintas cosas
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -44,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
                 navController.navigate(R.id.mainFragment);
                 return true;
             } else if (itemId == R.id.reservations) {
-                //TODO
+                navController.navigate(R.id.bookingsFragment);
+                return true;
             } else if (itemId == R.id.person) {
                 navController.navigate(R.id.profileFragment);
                 return true;

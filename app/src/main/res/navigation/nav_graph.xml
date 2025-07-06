@@ -12,6 +12,12 @@
     </fragment>
 
     <fragment
+        android:id="@+id/bookingsFragment"
+        android:name="com.lksnext.parkingplantilla.view.fragment.BookingsFragment"
+        tools:layout="@layout/fragment_bookings">
+    </fragment>
+
+    <fragment
         android:id="@+id/profileFragment"
         android:name="com.lksnext.parkingplantilla.view.fragment.ProfileFragment"
         tools:layout="@layout/fragment_profile">
