@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileViewModel extends ViewModel {
-    MutableLiveData<List<Car>> listaCoches = new MutableLiveData<>();
+    MutableLiveData<List<Car>> listaCoches = new MutableLiveData<>(null);
     MutableLiveData<Boolean> logout = new MutableLiveData<>(false);
     MutableLiveData<Boolean> sent = new MutableLiveData<>(null);
 
@@ -104,6 +104,10 @@ public class ProfileViewModel extends ViewModel {
         logout.setValue(true);
         new Handler(Looper.getMainLooper()).postDelayed(() ->
             logout.setValue(false), 2000);
+    }
+
+    public MutableLiveData<Boolean> getLogout(){
+        return logout;
     }
 
 }
