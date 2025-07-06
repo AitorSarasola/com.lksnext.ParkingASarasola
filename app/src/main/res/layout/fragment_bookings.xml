@@ -15,7 +15,7 @@
     android:text="TUS RESERVAS"
     android:gravity="end"
     android:textStyle="bold"
-    android:layout_marginTop="-40dp"
+    android:layout_marginTop="-10dp"
     android:textSize="35dp"
     android:textColor="@color/orange"
     />
@@ -73,29 +73,10 @@
         android:background="@color/orange"
         />
 
-    <TextView
-        android:id="@+id/txtSelecActual"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Reservas de los Ultimos 30 Días"
-        android:textSize="22dp"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/orange"
-        android:textStyle="bold"
-        android:gravity="right"/>
-
-    <View
-        android:id="@+id/thirdLine"
-        android:layout_marginTop="7dp"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/orange"
-        />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewBookings"
         android:layout_width="match_parent"
-        android:layout_height="465dp"
+        android:layout_height="510dp"
         android:layout_marginTop="10dp"
         tools:listitem="@layout/fragment_booking_item"
         android:contentDescription="Lista De Plazas"/>
@@ -103,8 +84,8 @@
     <TextView
         android:id="@+id/listaVaciaM"
         android:layout_width="match_parent"
-        android:layout_marginTop="-465dp"
-        android:layout_height="465dp"
+        android:layout_marginTop="-510dp"
+        android:layout_height="510dp"
         android:text="Car-gando..."
         android:textStyle="bold|italic"
         android:textColor="@color/orange"
@@ -127,8 +108,7 @@
         android:text="Mensaje de Error"
         android:gravity="end"
         android:layout_marginTop="5dp"
-        android:textStyle="bold"
-        android:textSize="20dp"
+        android:textSize="19dp"
         android:textColor="@color/red"
         />
 

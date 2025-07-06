@@ -1,6 +1,8 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
+import android.content.Context;
 import android.util.Log;
+import android.view.ContentInfo;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -41,21 +43,18 @@ public class BookingsViewModel extends ViewModel {
     }
 
     private void buscarReservasActuales(){
-        Log.d("54B9E0","77777777");
         error.setValue("");
         listaReservas.setValue(new ArrayList<>());
-        Log.d("54B9E0","8888888");
+        listaReservas.setValue(null);
         Fecha hoy = Fecha.fechaActual();
         DataRepository.getBookingsForUserBetweenDates(hoy, null, new CallbackList<Reserva>() {
             @Override
             public void onSuccess(List<Reserva> lista) {
-                Log.d("54B9E0","9999999999");
                 listaReservas.setValue(lista);
             }
 
             @Override
             public void onFailure(String errorM) {
-                Log.d("54B9E0","101010010010101");
                 error.setValue(errorM);
             }
         });
@@ -63,6 +62,7 @@ public class BookingsViewModel extends ViewModel {
 
     private void buscarUltimasReservas(){
         listaReservas.setValue(new ArrayList<>());
+        listaReservas.setValue(null);
 
         Fecha hoy = Fecha.fechaActual();
         hoy.restarDias(1);
@@ -71,6 +71,9 @@ public class BookingsViewModel extends ViewModel {
         DataRepository.getBookingsForUserBetweenDates(hace30dias, hoy, new CallbackList<Reserva>() {
             @Override
             public void onSuccess(List<Reserva> lista) {
+                lista.sort((r1, r2) ->
+                        r2.getDay().toStringForFirestore().compareTo(r1.getDay().toStringForFirestore())
+                );
                 listaReservas.setValue(lista);
             }
 
@@ -81,8 +84,8 @@ public class BookingsViewModel extends ViewModel {
         });
     }
 
-    public void cancelarReserva(Reserva reserva){
-        DataRepository.cancelBookingById(reserva.getReservaId(), new CallbackBool() {
+    public void cancelarReserva(Reserva reserva, Context context){
+        DataRepository.cancelBookingById(reserva.getReservaId(), context, new CallbackBool() {
             @Override
             public void onResult(boolean result) {
                 if(result){
@@ -94,7 +97,7 @@ public class BookingsViewModel extends ViewModel {
         });
     }
 
-    public void añadir15Min(Reserva reserva, CallbackBool callback){
+    public void añadir15Min(Reserva reserva, Context context, CallbackBool callback){
         int index = listaReservas.getValue().indexOf(reserva);
         if (index < 0) {
             callback.onResult(false);
@@ -111,7 +114,7 @@ public class BookingsViewModel extends ViewModel {
             setError("La reserva no puede cruzar medianoche.");
         }
 
-        DataRepository.add15minToBookingByID(reserva, new Callback() {
+        DataRepository.add15minToBookingByID(reserva, context, new Callback() {
             @Override
             public void onSuccess() {
                 callback.onResult(true);

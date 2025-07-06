@@ -45,6 +45,7 @@ public class Reserva {
         return isCancelled;
     }
 
+
     public void setCancelled(boolean isCancelled) {
         this.isCancelled = isCancelled;
     }
@@ -53,9 +54,15 @@ public class Reserva {
         return day;
     }
 
+    public void setDay(Fecha day) {
+        this.day = day;
+    }
+
     public Hora getIniTime() {
         return iniTime;
     }
+
+    public void setIniTime(Hora iniTime){this.iniTime = iniTime;}
 
     public Hora getEndTime() {
         return endTime;

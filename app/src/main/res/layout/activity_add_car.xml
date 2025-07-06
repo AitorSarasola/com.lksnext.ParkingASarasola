@@ -189,9 +189,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:textStyle="italic|bold"
+        android:textStyle="italic"
         android:layout_marginTop="5dp"
         android:textSize="20dp"
+        android:layout_marginRight="10dp"
         android:textColor="@color/red"
         android:text="Error al guardar el coche. Intentelo de nuevo más tarde."
         />

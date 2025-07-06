@@ -90,7 +90,7 @@ public class SearchResultsActivity extends AppCompatActivity {
             else {
                 binding.listaVaciaM.setText("");
                 ParkingSpaceAdapter plazaAdapter = new ParkingSpaceAdapter(plazasList, (plaza, itemView) ->
-                    searchResultsViewModel.book(plaza, matricula, new Callback() {
+                    searchResultsViewModel.book(plaza, matricula, this, new Callback() {
                         @Override
                         public void onSuccess() {
                             Button btn = itemView.findViewById(R.id.btnBook);

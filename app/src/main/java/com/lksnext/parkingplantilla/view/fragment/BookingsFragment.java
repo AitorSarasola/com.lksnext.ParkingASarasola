@@ -35,15 +35,15 @@ public class BookingsFragment extends Fragment {
 
         bookingsViewModel = new ViewModelProvider(this).get(BookingsViewModel.class);
 
-        binding.txtSelecActual.setText("Reservas Actuales");
-        binding.txtMensaje.setText("");
+        //binding.txtSelecActual.setText("Reservas Actuales");
+        bookingsViewModel.setError("");
 
         bookingsViewModel.buscarReservas(1);
 
         binding.btnReservasActuales.setOnClickListener(view -> {
             bookingsViewModel.setError("");
             bookingsViewModel.setReservasActuales(true);
-            binding.txtSelecActual.setText("Reservas Actuales");
+            //binding.txtSelecActual.setText("Reservas Actuales");
             // Obtener colores correctamente
             int orange = ContextCompat.getColor(requireContext(), R.color.orange);
             int white = ContextCompat.getColor(requireContext(), R.color.design_default_color_background);
@@ -62,7 +62,7 @@ public class BookingsFragment extends Fragment {
         binding.btnUltimos30Dias.setOnClickListener(view -> {
             bookingsViewModel.setError("");
             bookingsViewModel.setReservasActuales(false);
-            binding.txtSelecActual.setText("Reservas de los Últimos 30 Días");
+            //binding.txtSelecActual.setText("Reservas de los Últimos 30 Días");
             // Obtener colores correctamente
             int orange = ContextCompat.getColor(requireContext(), R.color.orange);
             int white = ContextCompat.getColor(requireContext(), R.color.design_default_color_background);
@@ -79,20 +79,22 @@ public class BookingsFragment extends Fragment {
         });
 
         bookingsViewModel.getListaReservas().observe(getViewLifecycleOwner(), listaReservas->{
-            if (listaReservas == null || listaReservas.isEmpty()){
+            if (listaReservas == null)
+                binding.listaVaciaM.setText("Car-gando...");
+            else if(listaReservas.isEmpty())
                 binding.listaVaciaM.setText("No Hay Reservas\nDisponibles");
-            }else{
+            else{
                 binding.listaVaciaM.setText("");
             }
 
             if (listaReservas != null) {
             BookingAdapter adapter = new BookingAdapter(listaReservas, new BookingAdapter.OnBookEditListener() {
                 @Override
-                public void onCancel(Reserva reserva) { bookingsViewModel.cancelarReserva(reserva);}
+                public void onCancel(Reserva reserva) { bookingsViewModel.cancelarReserva(reserva, getActivity());}
 
                 @Override
                 public void onAdd15Min(Reserva reserva) {
-                    bookingsViewModel.añadir15Min(reserva, task ->{
+                    bookingsViewModel.añadir15Min(reserva, getActivity(), task ->{
                         if(task){
                             bookingsViewModel.buscarReservas(0);
                             binding.txtMensaje.setTextColor(ContextCompat.getColor(requireContext(), R.color.light_blue));
@@ -107,8 +109,12 @@ public class BookingsFragment extends Fragment {
         });
 
         bookingsViewModel.getError().observe(getViewLifecycleOwner(), e->{
-            binding.txtMensaje.setTextColor(ContextCompat.getColor(requireContext(), R.color.red));
-            binding.txtMensaje.setText(e);
+            if(e == null || e.equals("")){
+                binding.txtMensaje.setText("");
+            }else{
+                binding.txtMensaje.setTextColor(ContextCompat.getColor(requireContext(), R.color.red));
+                binding.txtMensaje.setText(e);
+            }
         });
 
         // Aquí puedes configurar el adaptador y cargar las reservas

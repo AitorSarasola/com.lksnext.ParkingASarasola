@@ -2,7 +2,14 @@ package com.lksnext.parkingplantilla.data;
 
 import static java.lang.Math.abs;
 
+import android.content.Context;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -10,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.Query;
+import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.domain.Callback;
 import com.lksnext.parkingplantilla.domain.CallbackBool;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,12 +26,14 @@ import com.lksnext.parkingplantilla.domain.CallbackList;
 import com.lksnext.parkingplantilla.domain.Car;
 import com.lksnext.parkingplantilla.domain.Fecha;
 import com.lksnext.parkingplantilla.domain.Hora;
+import com.lksnext.parkingplantilla.domain.NotificationHelper;
 import com.lksnext.parkingplantilla.domain.Plaza;
 import com.lksnext.parkingplantilla.domain.Reserva;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -31,6 +41,7 @@ public class DataRepository {
 
     private static DataRepository instance;
     private static final int USERNAME_MAX_LENGTH = 20; // Longitud máxima del nombre de usuario
+    private static final String CHANNEL_ID = "NOTIFICACIONES_PARKING";
     private DataRepository(){
 
     }
@@ -332,7 +343,7 @@ public class DataRepository {
         });
     }
 
-    public static void bookParkingSpace(Plaza plaza,String matricula, Fecha fecha, Hora iniH, Hora finH, Callback callback) {
+    public static void bookParkingSpace(Plaza plaza,String matricula, Fecha fecha, Hora iniH, Hora finH, Context context, Callback callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -351,7 +362,12 @@ public class DataRepository {
                 booking.put("isCancelled", false);
 
                 db.collection("Bookings").add(booking)
-                        .addOnSuccessListener(documentReference -> callback.onSuccess())
+                        .addOnSuccessListener(documentReference -> {
+                            String id = documentReference.getId();
+                            Reserva reserva = new Reserva(id, userId, matricula, plaza, false, fecha, iniH, finH);
+                            notificaciones15y30minutos(context, reserva);
+                            callback.onSuccess();
+                        })
                         .addOnFailureListener(e -> callback.onFailure("Error al reservar la plaza."));
             }
         });
@@ -469,11 +485,10 @@ public class DataRepository {
                 .addOnFailureListener(e->Log.e("GETALLBOOKINGS","Error: "+e));
     }
 
-    public static void cancelBookingById(String bookingId, CallbackBool callback) {
+    public static void cancelBookingById(String bookingId, Context context, CallbackBool callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference bookingRef = db.collection("Bookings").document(bookingId);
-
         bookingRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (!documentSnapshot.exists()) {
@@ -482,6 +497,7 @@ public class DataRepository {
                     }
 
                     String dayStr = documentSnapshot.getString("day"); // YYYY-MM-DD
+                    dayStr = Fecha.invertirFormatoFecha(dayStr);
                     String endTimeStr = documentSnapshot.getString("endTime"); // HH:mm
 
                     if (dayStr == null || endTimeStr == null) {
@@ -492,15 +508,17 @@ public class DataRepository {
                     // Parse fecha
                     Fecha fecha = new Fecha(dayStr);
                     Hora horaFinal = new Hora(endTimeStr);
-
                     Fecha hoy = Fecha.fechaActual();
                     Hora ahora = Hora.horaActual();
                     //CAMBIAR PARA IMPLEMENTAR RESERVAS QUE PASEN MEDIANOCHE
 
-                    if (fecha.compareTo(hoy)<0 ||(fecha.compareTo(hoy)<=0 && horaFinal.compareTo(ahora)<0)) {
+                    if (!(fecha.compareTo(hoy)<0 ||(fecha.compareTo(hoy)<=0 && horaFinal.compareTo(ahora)<0))) {
                         // la reserva es futura → podemos cancelarla
                         bookingRef.update("isCancelled", true)
-                                .addOnSuccessListener(unused -> callback.onResult(true))
+                                .addOnSuccessListener(unused -> {
+                                    cancelaNotificaciones15y30minutos(context, bookingId);
+                                    callback.onResult(true);
+                                })
                                 .addOnFailureListener(e -> callback.onResult(false));
                     } else {
                         // no se cancela porque ya pasó
@@ -509,10 +527,11 @@ public class DataRepository {
                 })
                 .addOnFailureListener(e -> {
                     callback.onResult(false);
+                    Log.d("CANCELARERRROR","66666");
                 });
     }
 
-    public static void add15minToBookingByID(Reserva booking, Callback callback) {
+    public static void add15minToBookingByID(Reserva booking, Context context, Callback callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String bookingId = booking.getReservaId();
 
@@ -555,7 +574,11 @@ public class DataRepository {
                     isPlazaAvailable(booking.getPlaza(),fecha, horaInicial, horaFinal,bookingId, task->{
                         if(task){
                             bookingRef.update("endTime", horaFinal.toString())
-                                    .addOnSuccessListener(unused -> callback.onSuccess())
+                                    .addOnSuccessListener(unused -> {
+                                        booking.setEndTime(horaFinal); booking.setIniTime(horaInicial); booking.setDay(fecha);
+                                        retrasarNotificaciones15min(context,booking);
+                                        callback.onSuccess();
+                                    })
                                     .addOnFailureListener(e -> callback.onFailure());
                         }else{
                             callback.onFailure("No se puede alargar la reserva, hay otra reserva después.");
@@ -565,6 +588,70 @@ public class DataRepository {
                 .addOnFailureListener(e -> {
                     callback.onFailure();
                 });
+    }
+
+    public static void notificaciones15y30minutos(Context context, Reserva reserva){
+        String titulo, texto, id, plaza;
+        id = reserva.getReservaId();
+        plaza = reserva.getPlaza().getId();
+
+        Fecha hoy = Fecha.fechaActual();
+        Hora ahora = Hora.horaActual();
+        long difMinutos = abs(ahora.diferenciaEnMinutos(reserva.getEndTime())) + 24*60*abs(hoy.diferenciaEnDias(reserva.getDay()));
+        if(hoy.compareTo(reserva.getDay()) == 0 && difMinutos > 30){
+            Log.d("NOTIFICACION ENVIAR", "111111  30");
+            titulo = "Tu reserva termina en 30 minutos.";
+            texto = "Quedan 30 minutos para que termine tu reserva de la plaza Nº "+reserva.getPlaza().getId()+".";
+            id = reserva.getReservaId()+"30";
+            scheduleReservationNotification(context, id, titulo, texto, difMinutos-30);
+        }
+
+        if(hoy.compareTo(reserva.getDay()) == 0 && difMinutos > 15){
+            Log.d("NOTIFICACION ENVIAR", "111111  15");
+            titulo = "Tu reserva termina en 15 minutos.";
+            texto = "Quedan 15 minutos para que termine tu reserva de la plaza Nº "+reserva.getPlaza().getId()+".";
+            id = reserva.getReservaId()+"15";
+            scheduleReservationNotification(context, id, titulo, texto, difMinutos-15);
+        }
+
+    }
+
+    public static void cancelaNotificaciones15y30minutos(Context context, String reservaId){
+        cancelReservationNotification(context, reservaId+"15");
+        cancelReservationNotification(context,reservaId+"30");
+    }
+
+    public static void retrasarNotificaciones15min(Context context, Reserva reserva){
+        String reservaId = reserva.getReservaId();
+        cancelReservationNotification(context, reservaId+"15");
+        cancelReservationNotification(context,reservaId+"30");
+
+        notificaciones15y30minutos(context,reserva);
+    }
+
+    private static void cancelReservationNotification(Context context, String reservaId) {
+        WorkManager.getInstance(context).cancelUniqueWork(reservaId);
+    }
+
+    private static void scheduleReservationNotification(Context context, String notificationId, String title, String text, long delayMins ) {
+
+        Data data = new Data.Builder()
+                .putString("title", title)
+                .putString("text", text)
+                .putInt("id", notificationId.hashCode())
+                .build();
+
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(NotificationHelper.NotificationWorker.class)
+                .setInputData(data)
+                .setInitialDelay(delayMins, TimeUnit.MINUTES)
+                .addTag(notificationId) // <- esto es clave para poder luego cancelar o reprogramar
+                .build();
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+                notificationId,
+                ExistingWorkPolicy.REPLACE, // si ya existía, la reemplaza
+                workRequest
+        );
     }
 
 }

@@ -1,5 +1,6 @@
 package com.lksnext.parkingplantilla.viewmodel;
 
+import android.content.Context;
 import android.telecom.Call;
 
 import androidx.lifecycle.MutableLiveData;
@@ -54,7 +55,7 @@ public class SearchResultsViewModel extends ViewModel {
         error.setValue(errorMessage);
     }
 
-    public void book(Plaza plaza, String matricula, Callback callback) {
+    public void book(Plaza plaza, String matricula, Context context, Callback callback) {
         error.setValue("");
         if (!DataRepository.isValidLicensePlate(matricula)){
             error.setValue("La Matricula No Es Válida.");
@@ -80,7 +81,7 @@ public class SearchResultsViewModel extends ViewModel {
             return;
         }
 
-        DataRepository.bookParkingSpace(plaza, matricula, fecha.getValue(), iniHour, finHour, new Callback() {
+        DataRepository.bookParkingSpace(plaza, matricula, fecha.getValue(), iniHour, finHour, context, new Callback() {
             @Override
             public void onSuccess() {
                 error.setValue("");
