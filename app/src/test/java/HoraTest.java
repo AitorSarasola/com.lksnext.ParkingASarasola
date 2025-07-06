@@ -57,8 +57,8 @@ public class HoraTest {
         Hora h2 = new Hora(10, 30);
         Hora h3 = new Hora(11, 0);
 
-        assertTrue(h1.equals(h2));
-        assertFalse(h1.equals(h3));
+        assertEquals(h1, h2);
+        assertNotEquals(h1, h3);
         assertEquals(0, h1.compareTo(h2));
         assertTrue(h1.compareTo(h3) < 0);
         assertTrue(h3.compareTo(h1) > 0);

@@ -58,7 +58,7 @@ public class FechaTest {
 
         assertTrue(f1.compareTo(f2) < 0);
         assertTrue(f2.compareTo(f1) > 0);
-        assertTrue(f1.compareTo(f3) == 0);
+        assertEquals(f1,f3);
     }
 
     @Test

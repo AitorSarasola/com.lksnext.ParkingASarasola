@@ -43,7 +43,7 @@ public class DataRepository {
     private static final String HORA_FINAL = "endTime";
 
     public DataRepository(){
-
+        //Clase para llamar a metodos y reciclar código.
     }
 
     //Creación de la instancia en caso de que no exista.
@@ -335,7 +335,7 @@ public class DataRepository {
                 String endTimeLag = doc.getString(HORA_FINAL);
                 Boolean isCancelled = doc.getBoolean(IS_CANCELLED);
 
-                if(isCancelled)
+                if(isCancelled.equals(Boolean.TRUE))
                     continue;
                 // Si hay solapamiento, la plaza no está disponible
                 if (iniTime.toString().compareTo(endTimeLag) < 0 && iniTimeLag.compareTo(endTime.toString()) < 0) {
