@@ -66,7 +66,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             label = "\n  Cero Emisiones";
         holder.txtEtiqueta.setText("• Etiqueta Medioambiental: " + label);
 
-        if(abs(reserva.getEndTime().diferenciaEnMinutos(reserva.getIniTime())) > 7*60 - 15) {
+        if(abs(reserva.getEndTime().diferenciaEnMinutos(reserva.getIniTime())) > 8*60 - 15) {
             holder.btnAdd15.setEnabled(false);
             holder.btnAdd15.setAlpha(0.5f);
         }
