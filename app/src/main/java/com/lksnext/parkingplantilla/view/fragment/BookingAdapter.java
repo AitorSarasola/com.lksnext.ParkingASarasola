@@ -79,7 +79,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             holder.txtMensaje.setVisibility(View.GONE);
 
         int lag = reserva.getDay().compareTo(Fecha.fechaActual());
-        if(lag < 0 || (lag <= 0 && reserva.getEndTime().compareTo(Hora.horaActual()) <= 0)){
+        if(lag < 0 || (lag == 0 && reserva.getEndTime().compareTo(Hora.horaActual()) < 0)){
             holder.btnCancelar.setVisibility(View.GONE);
             holder.btnAdd15.setVisibility(View.GONE);
             if(lag == 0 && reserva.getEndTime().compareTo(Hora.horaActual()) <= 0) {

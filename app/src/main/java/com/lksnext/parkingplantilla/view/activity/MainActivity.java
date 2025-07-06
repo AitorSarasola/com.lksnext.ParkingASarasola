@@ -12,6 +12,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lksnext.parkingplantilla.R;
 import com.lksnext.parkingplantilla.databinding.ActivityMainBinding;
+import com.lksnext.parkingplantilla.domain.NotificationHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
         //Asignamos los botones de navegacion que se encuentran en la vista (layout)
         bottomNavigationView = binding.bottomNavigationView;
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        NotificationHelper.createNotificationChannel(this);
+        NotificationHelper.requestNotificationPermission(this);
 
         //Dependendiendo que boton clique el usuario de la navegacion se hacen distintas cosas
         bottomNavigationView.setOnItemSelectedListener(item -> {

@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:layout_marginBottom="8dp"
+    android:padding="18dp"
+    android:layout_marginBottom="12dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/item_frame">
@@ -17,15 +17,16 @@
         <TextView
             android:id="@+id/txtMatricula"
             android:textStyle="bold"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:layout_marginRight="10dp"
             android:text="COCHE\n0000ABC"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <ImageView
             android:id="@+id/carTypeImage"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/item_frame_small"
             android:contentDescription="Tipo de vehículo"
             android:scaleType="centerCrop"
@@ -35,8 +36,8 @@
 
         <ImageView
             android:id="@+id/icon1"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="Primera Propiedad"
             android:scaleType="fitEnd"
             android:src="@drawable/ic_disabled_vehicle"
@@ -44,8 +45,8 @@
 
         <ImageView
             android:id="@+id/icon2"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="SegundaPropiedad"
             android:scaleType="fitEnd"
             android:src="@drawable/ic_electric"
@@ -56,7 +57,7 @@
         android:id="@+id/txtDiscapacitados"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:textSize="18dp"
         android:text="• Para Discapacitados: No"/>
 
@@ -79,9 +80,11 @@
 
     <Button
         android:id="@+id/btnBorrar"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="8dp"
         android:text="Borrar"
         android:textStyle="bold"
+        android:textSize="13dp"
+        android:padding="4dp"
         android:textColor="@color/orange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

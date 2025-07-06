@@ -64,7 +64,7 @@ public class MainViewModel extends ViewModel {
         String[] listaHoras = new String[2];
         listaHoras[0] = Hora.horaActual().toString();
         Hora lag = Hora.horaActual();
-        lag.sumarMinutos(60*1);
+        lag.sumarMinutos(30);
         listaHoras[1] = lag.toString();
         return listaHoras;
     }

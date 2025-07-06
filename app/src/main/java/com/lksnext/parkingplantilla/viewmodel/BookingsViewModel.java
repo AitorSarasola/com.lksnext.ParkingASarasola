@@ -56,6 +56,7 @@ public class BookingsViewModel extends ViewModel {
             @Override
             public void onFailure(String errorM) {
                 error.setValue(errorM);
+                listaReservas.setValue(new ArrayList<>());
             }
         });
     }
@@ -80,6 +81,7 @@ public class BookingsViewModel extends ViewModel {
             @Override
             public void onFailure(String errorM) {
                 error.setValue("Error al cargar las reservas.");
+                listaReservas.setValue(new ArrayList<>());
             }
         });
     }
@@ -91,6 +93,7 @@ public class BookingsViewModel extends ViewModel {
                 if(result){
                     buscarReservas(1);
                 }else{
+                    buscarReservas(0);
                     setError("No se ha podido cancelar la reserva.");
                 }
             }
