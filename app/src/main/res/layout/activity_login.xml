@@ -113,7 +113,7 @@
         android:id="@+id/changePassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:text="He olvidado mi contraseña"
         android:textStyle="bold|italic"
         android:textSize="18dp"
@@ -122,35 +122,21 @@
         app:layout_constraintTop_toBottomOf="@+id/checkboxLayout"
         />
 
-    <ImageButton
-        android:id="@+id/googleLoginButton"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="15dp"
-        android:src="@drawable/ic_google_logo"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
-        android:contentDescription="Inicio de sesión mediante google"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/changePassword"
-        />
-
     <TextView
         android:id="@+id/errorLogin"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
         android:text="The email and the password can not be empty"
         android:textAlignment="viewEnd"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="#e73712"
         android:textColorHint="#FF8282"
         android:textSize="13sp"
-        android:textStyle="bold|italic"
+        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintTop_toBottomOf="@id/googleLoginButton" />
+        app:layout_constraintTop_toBottomOf="@id/changePassword" />
 
     <Button
         android:id="@+id/loginButton"
