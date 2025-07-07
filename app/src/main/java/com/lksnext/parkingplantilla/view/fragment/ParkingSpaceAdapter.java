@@ -45,7 +45,7 @@ public class ParkingSpaceAdapter extends RecyclerView.Adapter<ParkingSpaceAdapte
         holder.txtElectrico.setText("• " + (plaza.isElectrico() ? "Con" : "Sin") + " Cargador Eléctrico");
         holder.txtDiscapacitados.setText("• " + (plaza.isParaDiscapacitados() ? "" : "No")+" Apto Para Discapacitados");
         String label = plaza.getEtiqueta().toString();
-        if(label=="CERO_EMISIONES")
+        if(label.equals("CERO_EMISIONES"))
             label = "\n  Cero Emisiones";
         holder.txtEtiqueta.setText("• Etiqueta Medioambiental: " + label);
 

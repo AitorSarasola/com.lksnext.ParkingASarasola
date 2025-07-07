@@ -41,7 +41,7 @@ public class CarItemAdapter extends RecyclerView.Adapter<CarItemAdapter.CarViewH
         holder.txtElectrico.setText("• Eléctrico: " + (car.isElectrico() ? "Sí" : "No"));
         holder.txtDiscapacitados.setText("• Apto Para Discapacitados: " + (car.isParaDiscapacitados() ? "Sí" : "No"));
         String label = car.getEtiqueta().toString();
-        if(label=="CERO_EMISIONES")
+        if(label.equals("CERO_EMISIONES"))
             label = "\n  Cero Emisiones";
         holder.txtEtiqueta.setText("• Etiqueta Medioambiental: " + label);
 
