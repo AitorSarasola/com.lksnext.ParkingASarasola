@@ -568,7 +568,7 @@ public class DataRepository {
                     Hora horaFinal = new Hora(endTimeStr);
                     horaFinal.sumarMinutos(15);
                     if(horaFinal.compareTo(new Hora(0,15)) < 0){
-                        callback.onFailure("La reserva no puede cruzar medianoche.");
+                        callback.onFailure("La reserva no puede superar medianoche.");
                         return;
                     }
                     if (abs(horaInicial.diferenciaEnMinutos(horaFinal)) > 8*60) {
