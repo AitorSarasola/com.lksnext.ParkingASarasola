@@ -571,8 +571,8 @@ public class DataRepository {
                         callback.onFailure("La reserva no puede cruzar medianoche.");
                         return;
                     }
-                    if (abs(horaInicial.diferenciaEnMinutos(horaFinal)) > 7*60) {
-                        callback.onFailure("La reserva no puede superar 7 horas.");
+                    if (abs(horaInicial.diferenciaEnMinutos(horaFinal)) > 8*60) {
+                        callback.onFailure("La reserva no puede superar 8 horas.");
                         return;
                     }
                     Fecha hoy = Fecha.fechaActual();
